@@ -1,5 +1,6 @@
 ﻿using Extensions;
 using System;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Threading;
 
@@ -7,10 +8,11 @@ namespace Core
 {
     public class Chat
     {
-        public static int userId = 0;
-        public static string userName = "";
+        public static int userId = 0; // Chatbot user ID
+        public static string userName = ""; // " " name
         private static bool shutUp = false;
-        
+        private static Dictionary<int, DateTime> floodLimit = new Dictionary<int, DateTime>(); // Per user flood limit
+
         // Send messages
         public static void SendMessage(string text)
         {
@@ -50,14 +52,19 @@ namespace Core
                     string message = Regex.Replace(data[3], @"\[[^]]+\]", "");
 
                     // Flood protection
-                    /*try {
-                        if (user.id == -1 && data[3].Split('\f')[1] == "flwarn")
-                        {
-                            shutUp = true;
-                            floodWait = new Timer(delegate { shutUp = false; floodWait = null; }, null, 1000, 0);
-                            Log.Write(0, "Core", "Flood limit was reached, staying silent for 1 minute.");
+                    if (floodLimit.ContainsKey(user.id)) {
+                        // Get the value for the current user
+                        DateTime currentUserFlood = floodLimit[user.id];
+
+                        // Check if it has been 30 seconds since the last action
+                        if (currentUserFlood.Second < (new DateTime()).Second + 30) {
+                            return;
+                        } else {
+                            floodLimit[user.id] = new DateTime();
                         }
-                    } catch { }*/
+                    } else {
+                        floodLimit.Add(user.id, new DateTime());
+                    }
 
                     // Internal commands
                     if (message.StartsWith("!"))

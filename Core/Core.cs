@@ -33,7 +33,7 @@ namespace Core
         static void Main(string[] args)
         {
             // Set console title
-            Console.Title = "Sock Chat Bot";
+            Console.Title = "Shinoa";
 
             // Check if mandatory directories exist.
             foreach (var dir in directories)
@@ -50,7 +50,7 @@ namespace Core
             Log.Init(directories[0] + "/" + logFileName);
 
             // Print start
-            Log.Write(0, "Core", "Sock Chat Bot");
+            Log.Write(0, "Core", "Shinoa");
 #if DEBUG
             Log.Write(0, "Core", "This is a debug build, things might not turn out as expected.");
 #endif
