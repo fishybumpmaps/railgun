@@ -7,8 +7,8 @@
     <ProjectGuid>{D149E788-5705-4806-8571-B4D0302136B7}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Satori</RootNamespace>
-    <AssemblyName>Satori</AssemblyName>
+    <RootNamespace>Core</RootNamespace>
+    <AssemblyName>Shinoa</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <PublishUrl>publish\</PublishUrl>

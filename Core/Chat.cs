@@ -10,18 +10,47 @@ namespace Core
     {
         public static int userId = 0; // Chatbot user ID
         public static string userName = ""; // " " name
-        private static bool shutUp = false;
         private static Dictionary<int, DateTime> floodLimit = new Dictionary<int, DateTime>(); // Per user flood limit
+        public static int messageLimit = 0;
+        public static int lastSender = 0;
 
         // Send messages
         public static void SendMessage(string text)
         {
-            if(shutUp)
+            Core.sock.ConnectionSend(Message.Pack(2, Message.PackArray(new string[] { userId.ToString(), text })));
+        }
+
+        // Poke the flood limit
+        public static void UpdateFlood(int userId)
+        {
+            User user = Users.Get(userId);
+
+            if (floodLimit.ContainsKey(user.id))
             {
-                return;
+                floodLimit[user.id] = DateTime.Now;
+            } else {
+                floodLimit.Add(user.id, DateTime.Now);
+            }
+        }
+
+        // Check the flood limit
+        public static bool CheckFlood(int userId)
+        {
+            // Check if the key exists
+            if (!floodLimit.ContainsKey(userId)) {
+                return false;
             }
 
-            Core.sock.ConnectionSend(Message.Pack(2, Message.PackArray(new string[] { userId.ToString(), text })));
+            // Get the value for the current user
+            TimeSpan currentUserFlood = DateTime.Now - floodLimit[userId];
+
+            // Check if it has been 30 seconds since the last action
+            if (currentUserFlood.TotalSeconds < messageLimit)
+            {
+                return true;
+            }
+
+            return false;
         }
 
         // Handle sock chat returns
@@ -48,23 +77,20 @@ namespace Core
                     // Get the sending user
                     user = Users.Get(int.Parse(data[2]));
 
+                    // Check flood limit
+                    if (CheckFlood(user.id))
+                    {
+                        return;
+                    }
+
+                    // Update flood limit
+                    UpdateFlood(user.id);
+
+                    // Update lastSender
+                    lastSender = user.id;
+
                     // Strip bbcodes
                     string message = Regex.Replace(data[3], @"\[[^]]+\]", "");
-
-                    // Flood protection
-                    if (floodLimit.ContainsKey(user.id)) {
-                        // Get the value for the current user
-                        DateTime currentUserFlood = floodLimit[user.id];
-
-                        // Check if it has been 30 seconds since the last action
-                        if (currentUserFlood.Second < (new DateTime()).Second + 30) {
-                            return;
-                        } else {
-                            floodLimit[user.id] = new DateTime();
-                        }
-                    } else {
-                        floodLimit.Add(user.id, new DateTime());
-                    }
 
                     // Internal commands
                     if (message.StartsWith("!"))
@@ -80,7 +106,16 @@ namespace Core
                                 SendMessage("Finished!");
                                 break;
 
-                            case "uptime":
+                            case "extensions:loaded":
+                                string extensions = "Loaded extensions:";
+                                foreach (IExtension extension in Core.Extensions)
+                                {
+                                    extensions += "\r\n" + extension.Name;
+                                }
+                                SendMessage(extensions);
+                                break;
+
+                            case "core:uptime":
                                 double uptime = Core.GetUptime();
                                 TimeSpan time = TimeSpan.FromSeconds(uptime);
                                 SendMessage(
@@ -93,7 +128,14 @@ namespace Core
                                 );
                                 break;
 #if DEBUG
-                            case "disintegrate":
+                            case "debug:floodlimits":
+                                foreach (KeyValuePair<int, DateTime> limit in floodLimit)
+                                {
+                                    SendMessage(limit.Key.ToString() + ":" + limit.Value.ToString());
+                                }
+                                break;
+                                
+                            case "debug:quit":
                                 Core.Shutdown(null, null);
                                 break;
 #endif
@@ -173,18 +215,7 @@ namespace Core
 
                         // Messages
                         case 1:
-                            // We're using this to recognise the chatbot
-                            if(data[3] == "-1")
-                            {
-                                try
-                                {
-                                    Users.Get(int.Parse(data[3]));
-                                } catch
-                                {
-                                    Users.Add(int.Parse(data[3]), data[4], data[5], "0 0 0 0 0");
-                                    Log.Write(0, "Core", "Added ChatBot to userlist.");
-                                }
-                            }
+                            // We don't have to do anything with this.
                             break;
 
                         // Channels

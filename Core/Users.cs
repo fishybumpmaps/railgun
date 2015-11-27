@@ -30,6 +30,12 @@ namespace Core
             return user;
         }
 
+        public static User Get(string name)
+        {
+            User user = Online.Single(get => get.userName == name);
+            return user;
+        }
+
         public static User Update(int id, string userName, string colour, string permissions)
         {
             User user = Get(id);

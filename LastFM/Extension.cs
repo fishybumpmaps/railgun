@@ -33,27 +33,38 @@ namespace LastFM
                 return;
             }
 
-            string message = Regex.Replace(data[3], @"\[[^]]+\]", "");
+            string message = Regex.Replace(data[3], @"\[[^]]+\]", ""),
+                    flashii = "",
+                    lastfm = "";
+            string[] msgParts = message.Split(' ');
+
+            // Check if a second part if set and it isn't blank
+            if(msgParts.Length > 1)
+            {
+                flashii = msgParts[1];
+            } else
+            {
+                flashii = data[2];
+            }
 
             // Create a WebClient object
-            WebClient request = new WebClient();
+            WebClient webClient = new WebClient();
 
             // Set headers
-            request.Headers["User-Agent"] = "Satori Last.FM Extension";
-
-            // Define
-            NowPlaying NowPlaying;
-            User user;
-
-            // Attempt to get the user
+            webClient.Headers["User-Agent"] = "Shinoa Last.FM Extension";
+            
+            // Try to get the last.fm username
             try
             {
-                user = Users.Get(int.Parse(data[2]));
-            } catch {
+                lastfm = webClient.DownloadString("http://flashii.net/spookyshit/lastfm.php?u=" + flashii + "&z=meow");
+            } catch
+            {
                 return;
             }
 
-            try
+            Chat.SendMessage(lastfm);
+
+            /*try
             {
                 Log.Write(0, "LastFM", "Getting Last.FM data for " + user.userName);
 
@@ -72,7 +83,7 @@ namespace LastFM
                 Chat.SendMessage("[i][b][color=" + user.colour + "]" + user.userName + "[/color][/b] " + (NowPlaying.IsListeningNow ? " is listening to [b]" : " last listened to [b]") + NowPlaying.Song + "[/b][/i]");
             } else {
                 Chat.SendMessage("[i][b][color=" + user.colour + "]" + user.userName + "[/color][/b] doesn't have a last.fm account hooked to their account![/i]");
-            }
+            }*/
         }
     }
 }

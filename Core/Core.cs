@@ -69,9 +69,22 @@ namespace Core
             settings.Write("Meta", "last_started", DateTime.Now.ToString());
             Log.Write(0, "Core", "Loaded settings!");
 
+            // Set flood limit
+            Log.Write(0, "Core", "Setting message limit...");
+            try {
+                Chat.messageLimit = int.Parse(settings.Read("Meta", "flood_limit"));
+            } catch
+            {
+                Log.Write(1, "Core", "No message limit was set, the default value of 10 seconds has been written to the config!");
+                Chat.messageLimit = 10;
+                settings.Write("Meta", "flood_limit", "10");
+            }
+
             // Initialise user handler
             Log.Write(0, "Core", "Initialising Users handler...");
             Users.Init();
+            Log.Write(0, "Core", "Adding ChatBot user...");
+            Users.Add(-1, "ChatBot", "#9E8DA7", "0 0 0 0 0");
             Log.Write(0, "Core", "Users handler initialised.");
 
             // Loading extensions
