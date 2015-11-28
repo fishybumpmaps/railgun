@@ -44,7 +44,7 @@ namespace Responses
             {
                 message = data[3].Split('\f')[2];
             } else {
-                message = Regex.Replace(data[3], @"\[[^]]+\]", "");
+                message = Regex.Replace(data[3], @"\[[^]]+\]", "").ToLower();
             }
 
             // Reload
@@ -57,10 +57,45 @@ namespace Responses
 
             Trigger trigger = null;
 
-            try
+            foreach (Trigger trig in Triggers)
             {
-                trigger = Triggers.Single(find => find.Triggers.Contains(message));
-            } catch { }
+                if (trigger != null) {
+                    break;
+                }
+                foreach (string msg in trig.Message) {
+                    if (msg == message) {
+                        trigger = trig;
+                        break;
+                    }
+                }
+                if (trigger != null) {
+                    break;
+                }
+                foreach (string msg in trig.Contains) {
+                    if (message.Contains(msg)) {
+                        trigger = trig;
+                        break;
+                    }
+                }
+                if (trigger != null) {
+                    break;
+                }
+                foreach (string msg in trig.StartWith) {
+                    if (message.StartsWith(msg)) {
+                        trigger = trig;
+                        break;
+                    }
+                }
+                if (trigger != null) {
+                    break;
+                }
+                foreach (string msg in trig.EndsWith) {
+                    if (message.EndsWith(msg)) {
+                        trigger = trig;
+                        break;
+                    }
+                }
+            }
 
             if(trigger != null)
             {

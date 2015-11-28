@@ -1,10 +1,16 @@
 ﻿using Core;
 using Extensions;
+using System;
+using System.IO;
+using System.Text.RegularExpressions;
 
 namespace Logger
 {
     public class Extension : IExtension
     {
+        public static bool active = false;
+        private static StreamWriter logWriter;
+
         public string Name
         {
             get
@@ -16,17 +22,100 @@ namespace Logger
         public void Initialise()
         {
             Log.Write(0, "Logger", "Initialised Chat Logger.");
-            Logger.Start();
+            
+            // Create log filename
+            string filename = "chat_" + DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss") + ".log";
+            // Check if the destination directory exists
+            if (!Directory.Exists(Utils.GetDirectories()[2] + "/ChatLogs/"))
+            {
+                Directory.CreateDirectory(Utils.GetDirectories()[2] + "/ChatLogs/");
+            }
+            // Create stream writer
+            logWriter = new StreamWriter(Utils.GetDirectories()[2] + "/ChatLogs/" + filename);
+            // Enable auto flush
+            logWriter.AutoFlush = true;
+
+            logWriter.WriteLine("Chat Log of " + DateTime.UtcNow);
+            logWriter.WriteLine("All dates and times are UTC.");
+            logWriter.WriteLine("=================================================================");
+
+            active = true;
+            Log.Write(0, "Logger", "Logging chat to file " + filename + ".");
         }
 
         public void Destruct()
         {
-            Logger.Stop();
+            active = false;
+            logWriter.Close();
+            logWriter = null;
+            Log.Write(0, "Logger", "Stopped logging the chat.");
         }
 
         public void Handle(string[] data)
         {
-            Logger.Handle(data);
+            if (!active)
+            {
+                return;
+            }
+
+            string logLine = "[" + DateTime.UtcNow + "] ";
+
+            switch(int.Parse(data[0]))
+            {
+                case 1:
+                    logLine += "* " + data[3] + " has joined.";
+                    break;
+                case 2:
+                    logLine += "<" + Chat.lastUser.userName + "[ID:" + Chat.lastUser.id + "]> " + Regex.Replace(data[3], @"\[[^]]+\]", "").Replace(" <br/> ", "\n");
+                    break;
+                case 3:
+                    logLine += "* " + Chat.lastUser.userName;
+                    // Add console log
+                    switch (data[3])
+                    {
+                        case "leave":
+                            logLine += " left.";
+                            break;
+                        case "kick":
+                            logLine += " got kicked.";
+                            break;
+                        default:
+                            logLine += " disconnected.";
+                            break;
+                    }
+                    break;
+                case 5:
+                    logLine += "* " + Chat.lastUser.userName + " " + (bool.Parse(data[1]) ? "joined" : "left") + " the channel.";
+                    break;
+                case 7:
+                    if(int.Parse(data[1]) == 0)
+                    {
+                        logLine += "Currently logged in: ";
+
+                        // Amount of users currently in the chat
+                        int usersAmount = int.Parse(data[2]);
+                        // Index where the users begin
+                        int startIndex = 3;
+                        // Iterate over the return
+                        for (int i = 0; i < usersAmount; i++)
+                        {
+                            logLine += data[startIndex + 1] + "[ID:" + data[startIndex] + "]" + (usersAmount * 5 == startIndex + 5 ? "." : ", ");
+                            startIndex = startIndex + 5;
+                        }
+                    } else
+                    {
+                        logLine = null;
+                    }
+                    break;
+                default:
+                    logLine = null;
+                    break;
+            }
+
+            if (logLine != null)
+            {
+                logWriter.WriteLine(logLine);
+            }
         }
     }
 }

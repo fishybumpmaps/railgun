@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Core
 {
-    class Ini
+    public class Ini
     {
         // Path to INI file
         public string path;

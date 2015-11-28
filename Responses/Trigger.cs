@@ -4,14 +4,10 @@ namespace Responses
 {
     public class Trigger
     {
-        public string[] Triggers { get; set; }
-
-        public List<List<string>> Responses { get; set; }
-
-        public Trigger(string[] Triggers, List<List<string>> Responses)
-        {
-            this.Triggers = Triggers;
-            this.Responses = Responses;
-        }
+        public string[] Message = new string[] { };
+        public string[] Contains = new string[] { };
+        public string[] StartWith = new string[] { };
+        public string[] EndsWith = new string[] { };
+        public List<List<string>> Responses = new List<List<string>>();
     }
 }

@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Satori Extensions Model")]
+[assembly: AssemblyTitle("Shinoa Extensions Model")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Satori Extensions Model")]
+[assembly: AssemblyProduct("Shinoa Extensions Model")]
 [assembly: AssemblyCopyright("Copyright © Flashwave 2015")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

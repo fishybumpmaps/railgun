@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Satori Logger")]
-[assembly: AssemblyDescription("Logs the chat to a file when requested")]
+[assembly: AssemblyTitle("Shinoa Logger")]
+[assembly: AssemblyDescription("Logs the chat to a human readable format")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Satori Logger")]
+[assembly: AssemblyProduct("Shinoa Logger")]
 [assembly: AssemblyCopyright("Copyright © Flashwave 2015")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

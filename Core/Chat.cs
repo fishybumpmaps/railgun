@@ -13,6 +13,7 @@ namespace Core
         private static Dictionary<int, DateTime> floodLimit = new Dictionary<int, DateTime>(); // Per user flood limit
         public static int messageLimit = 0;
         public static int lastSender = 0;
+        public static User lastUser;
 
         // Send messages
         public static void SendMessage(string text)
@@ -68,7 +69,7 @@ namespace Core
 
                 // User joining
                 case 1:
-                    Users.Add(int.Parse(data[2]), data[3], data[4], data[5]);
+                    lastUser = Users.Add(int.Parse(data[2]), data[3], data[4], data[5]);
                     Log.Write(0, "Core", data[3] + " has joined.");
                     break;
 
@@ -76,6 +77,8 @@ namespace Core
                 case 2:
                     // Get the sending user
                     user = Users.Get(int.Parse(data[2]));
+
+                    lastUser = user;
 
                     // Check flood limit
                     if (CheckFlood(user.id))
@@ -151,6 +154,8 @@ namespace Core
                     // Remove user
                     user = Users.Remove(int.Parse(data[1]));
 
+                    lastUser = user;
+
                     // Add console log
                     switch (data[3])
                     {
@@ -179,12 +184,13 @@ namespace Core
                     if(bool.Parse(data[1]))
                     {
                         // Joined the channel
-                        Users.Add(int.Parse(data[2]), data[3], data[4], data[5]);
+                        lastUser = Users.Add(int.Parse(data[2]), data[3], data[4], data[5]);
                         Log.Write(0, "Core", data[3] + " has joined the channel.");
                     } else
                     {
                         // Left the channel
                         user = Users.Remove(int.Parse(data[2]));
+                        lastUser = user;
                         Log.Write(0, "Core", user.userName + " has left the channel.");
                     }
                     break;
@@ -246,7 +252,7 @@ namespace Core
 
                 // User information has been updated
                 case 10:
-                    Users.Update(int.Parse(data[1]), data[2], data[3], data[4]);
+                    lastUser = Users.Update(int.Parse(data[1]), data[2], data[3], data[4]);
                     Log.Write(0, "Core", "A user was updated.");
                     break;
             }

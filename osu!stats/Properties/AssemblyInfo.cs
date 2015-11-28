@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Shinoa Flapstension")]
-[assembly: AssemblyDescription("The official flapstention for Shinoa")]
+[assembly: AssemblyTitle("osu!stats")]
+[assembly: AssemblyDescription("Displays account statistics for the game osu! for a user")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Shinoa Flapstension")]
+[assembly: AssemblyProduct("osu!stats")]
 [assembly: AssemblyCopyright("Copyright © Flashwave 2015")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("b9b5bd9a-86ca-4acb-bbb3-56fceee8a2f1")]
+[assembly: Guid("40679730-13d1-49fb-af08-53e4b2a8957d")]
 
 // Version information for an assembly consists of the following four values:
 //

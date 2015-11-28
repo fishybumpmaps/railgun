@@ -4,7 +4,7 @@ using WebSocketSharp;
 
 namespace Core
 {
-    class Sock
+    public class Sock
     {
         public bool connected = false; // Are we connected?
         private WebSocket ws; // WebSocket container
