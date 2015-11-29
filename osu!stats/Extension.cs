@@ -91,44 +91,44 @@ namespace osuStats
 
                             Chat.SendMessage(
                                 "[i][b]osu! statistics for [url=https://osu.ppy.sh/u/"
-                                + osu.user_id
+                                + (osu.user_id ?? "-1")
                                 + "]"
-                                + osu.username
+                                + (osu.username ?? "[deleted user]")
                                 + "[/url]"
                                 + (usernames[0] != osu.username ? " (" + usernames[0] + ")" : "")
                                 + "[/b][/i]\r\n"
                                 + "Performance: "
-                                + Math.Round(float.Parse(osu.pp_raw, CultureInfo.InvariantCulture), MidpointRounding.AwayFromZero).ToString("N0", cultureInfo)
+                                + Math.Round(float.Parse((osu.pp_raw ?? "-1"), CultureInfo.InvariantCulture), MidpointRounding.AwayFromZero).ToString("N0", cultureInfo)
                                 + "pp :: Rank #"
-                                + long.Parse(osu.pp_rank).ToString("N0", cultureInfo)
+                                + long.Parse((osu.pp_rank ?? "-1")).ToString("N0", cultureInfo)
                                 + " ("
                                 + osu.country
                                 + " #"
-                                + long.Parse(osu.pp_country_rank).ToString("N0", cultureInfo)
+                                + long.Parse((osu.pp_country_rank ?? "-1")).ToString("N0", cultureInfo)
                                 + ") :: Ranked Score: "
-                                + long.Parse(osu.ranked_score).ToString("N0", cultureInfo)
+                                + long.Parse((osu.ranked_score ?? "-1")).ToString("N0", cultureInfo)
                                 + " :: Accuracy: "
-                                + Math.Round(float.Parse(osu.accuracy, CultureInfo.InvariantCulture), 2, MidpointRounding.AwayFromZero).ToString("#.##", cultureInfo)
+                                + Math.Round(float.Parse((osu.accuracy ?? "-1"), CultureInfo.InvariantCulture), 2, MidpointRounding.AwayFromZero).ToString("#.##", cultureInfo)
                                 + "%\r\n"
                                 + "Total Score: "
-                                + long.Parse(osu.total_score).ToString("N0", cultureInfo)
+                                + long.Parse((osu.total_score ?? "-1")).ToString("N0", cultureInfo)
                                 + " :: SS: "
-                                + int.Parse(osu.count_rank_ss).ToString("N0", cultureInfo)
+                                + int.Parse((osu.count_rank_ss ?? "-1")).ToString("N0", cultureInfo)
                                 + " :: S: "
-                                + int.Parse(osu.count_rank_s).ToString("N0", cultureInfo)
+                                + int.Parse((osu.count_rank_s ?? "-1")).ToString("N0", cultureInfo)
                                 + " :: A: "
-                                + int.Parse(osu.count_rank_a).ToString("N0", cultureInfo)
+                                + int.Parse((osu.count_rank_a ?? "-1")).ToString("N0", cultureInfo)
                                 + "\r\n"
                                 + "Level: "
-                                + Math.Round(float.Parse(osu.level, CultureInfo.InvariantCulture))
+                                + Math.Round(float.Parse((osu.level ?? "-1"), CultureInfo.InvariantCulture))
                                 + " :: Plays: "
-                                + int.Parse(osu.playcount).ToString("N0", cultureInfo)
+                                + int.Parse((osu.playcount ?? "-1")).ToString("N0", cultureInfo)
                                 + " :: 300s: "
-                                + int.Parse(osu.count300).ToString("N0", cultureInfo)
+                                + int.Parse((osu.count300 ?? "-1")).ToString("N0", cultureInfo)
                                 + " :: 100s: "
-                                + int.Parse(osu.count100).ToString("N0", cultureInfo)
+                                + int.Parse((osu.count100 ?? "-1")).ToString("N0", cultureInfo)
                                 + " :: 50s: "
-                                + int.Parse(osu.count50).ToString("N0", cultureInfo)
+                                + int.Parse((osu.count50 ?? "-1")).ToString("N0", cultureInfo)
                             );
                             break;
                     }

@@ -2,7 +2,6 @@
 using Extensions;
 using System.Net;
 using System.Xml;
-using Newtonsoft.Json;
 using System.Text.RegularExpressions;
 
 namespace LastFM
@@ -19,7 +18,7 @@ namespace LastFM
 
         public void Initialise()
         {
-            Log.Write(0, "LastFM", "Loading osu!stats settings.");
+            Log.Write(0, "LastFM", "Loading Last.FM settings.");
             string osuApiKey = Utils.GetSettings().Read("LastFM", "apiKey");
 
             if (osuApiKey.Length < 1)
