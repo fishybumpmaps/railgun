@@ -1,6 +1,7 @@
 ﻿using Core;
 using Extensions;
 using System.Net;
+using System.Xml;
 using Newtonsoft.Json;
 using System.Text.RegularExpressions;
 
@@ -18,7 +19,18 @@ namespace LastFM
 
         public void Initialise()
         {
-            Log.Write(0, "LastFM", "Initialised Last.FM extension.");
+            Log.Write(0, "LastFM", "Loading osu!stats settings.");
+            string osuApiKey = Utils.GetSettings().Read("LastFM", "apiKey");
+
+            if (osuApiKey.Length < 1)
+            {
+                Utils.GetSettings().Write("LastFM", "apiKey", "api_key_here");
+                Log.Write(1, "LastFM", "No API key was set in the settings file, a placeholder value has been created!");
+            }
+            else
+            {
+                LastFM.SetApiKey(osuApiKey);
+            }
         }
 
         public void Destruct()
@@ -27,63 +39,86 @@ namespace LastFM
 
         public void Handle(string[] data)
         {
-            // Ignore if this isn't a normal chat message or if this isn't a !np message
-            if (data[0] != "2" || !Regex.Replace(data[3], @"\[[^]]+\]", "").StartsWith("!np"))
+            if (data[0] == "2")
             {
-                return;
+                // Clean message
+                string message = Regex.Replace(data[3], @"\[[^]]+\]", "");
+
+                // !np
+                if (message.StartsWith("!np"))
+                {
+                    string[] cArgs = message.Substring(1).Split(' ');
+
+                    // Create a WebClient object
+                    WebClient webClient = new WebClient();
+
+                    // Set headers
+                    webClient.Headers["User-Agent"] = "Shinoa Last.FM Extension";
+
+                    string[] usernames = { null, null };
+                    string username = "";
+
+                    try
+                    {
+                        username = cArgs[1];
+                    }
+                    catch
+                    {
+                        username = data[2];
+                    }
+
+
+                    // Try to get the last.fm username
+                    try
+                    {
+                        usernames = webClient.DownloadString("http://flashii.net/spookyshit/lastfm.php?u=" + username + "&z=meow").Split('|');
+                    }
+                    catch
+                    {
+                        Log.Write(2, "LastFM", "Failed to connect to Flashii!");
+                        return;
+                    }
+
+                    // Check if usernames isn't empty
+                    if (usernames.Length < 2)
+                    {
+                        Chat.SendMessage("[i][b]" + username + "[/b] is not a member here or does not have a Last.FM set to their account![/i]");
+                        return;
+                    }
+
+                    XmlDocument apiReturn = null;
+
+                    try
+                    {
+                        apiReturn = LastFM.LatestTrack(usernames[1]);
+                    }
+                    catch {
+                        Log.Write(1, "LastFM", "Something went wrong while getting the API return.");
+                        return;
+                    }
+
+                    if (apiReturn.GetElementsByTagName("name").Count < 2)
+                    {
+                        Chat.SendMessage("[i][b]" + username + "[/b] does not have an active Last.FM account set to their account![/i]");
+                        return;
+                    }
+
+                    string send = "[i][b]" + usernames[0] + "[/b] ";
+                    string track = apiReturn.GetElementsByTagName("name")[1].InnerText;
+                    string trackUrl = apiReturn.GetElementsByTagName("url")[1].InnerText;
+                    string artist = apiReturn.GetElementsByTagName("name")[0].InnerText;
+                    string aristUrl = apiReturn.GetElementsByTagName("url")[0].InnerText;
+
+                    bool nowListening = apiReturn.GetElementsByTagName("track")[0].Attributes["nowplaying"] != null;
+                    send += (nowListening ? "is listening" : "last listened") + " to ";
+                    send += "[url=" + trackUrl + "]" + track + "[/url]";
+                    send += (artist.Length > 1 && track.Length > 1 ? " by " : "");
+                    send += "[url=" + aristUrl + "]" + artist + "[/url]";
+                    send += "[/i]";
+
+                    Chat.SendMessage(send);
+                }
             }
-
-            string message = Regex.Replace(data[3], @"\[[^]]+\]", ""),
-                    flashii = "",
-                    lastfm = "";
-            string[] msgParts = message.Split(' ');
-
-            // Check if a second part if set and it isn't blank
-            if(msgParts.Length > 1)
-            {
-                flashii = msgParts[1];
-            } else
-            {
-                flashii = data[2];
-            }
-
-            // Create a WebClient object
-            WebClient webClient = new WebClient();
-
-            // Set headers
-            webClient.Headers["User-Agent"] = "Shinoa Last.FM Extension";
-            
-            // Try to get the last.fm username
-            try
-            {
-                lastfm = webClient.DownloadString("http://flashii.net/spookyshit/lastfm.php?u=" + flashii + "&z=meow");
-            } catch
-            {
-                return;
-            }
-
-            Chat.SendMessage(lastfm);
-
-            /*try
-            {
-                Log.Write(0, "LastFM", "Getting Last.FM data for " + user.userName);
-
-                string result = request.DownloadString(@"http://flashii.net/koishi/interface.php?m=lfm&u=" + data[2]);
-                // Attempt to parse the result
-                NowPlaying = JsonConvert.DeserializeObject<NowPlaying>(result);
-            }
-            catch
-            {
-                Log.Write(0, "LastFM", "Failed to get Last.FM data for " + user.userName);
-                NowPlaying = new NowPlaying() { IsSuccessful = false, IsListeningNow = false, Song = null };
-            }
-
-            if (NowPlaying.IsSuccessful == true)
-            {
-                Chat.SendMessage("[i][b][color=" + user.colour + "]" + user.userName + "[/color][/b] " + (NowPlaying.IsListeningNow ? " is listening to [b]" : " last listened to [b]") + NowPlaying.Song + "[/b][/i]");
-            } else {
-                Chat.SendMessage("[i][b][color=" + user.colour + "]" + user.userName + "[/color][/b] doesn't have a last.fm account hooked to their account![/i]");
-            }*/
         }
     }
 }

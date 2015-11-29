@@ -53,7 +53,7 @@ namespace osuStats
                             }
                             
 
-                            // Try to get the last.fm username
+                            // Try to get the osu username
                             try
                             {
                                 usernames = webClient.DownloadString("http://flashii.net/spookyshit/osu.php?u=" + username + "&z=meow").Split('|');

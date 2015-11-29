@@ -43,7 +43,7 @@ namespace osuStats
             {
                 try
                 {
-                    Log.Write(1, "osu!stats", "Falling back to unsecure HTTP...");
+                    Log.Write(1, "osu!stats", "Falling back to insecure HTTP...");
                     cache = webClient.DownloadString("http://" + url);
                 } catch
                 {
