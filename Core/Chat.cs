@@ -181,7 +181,7 @@ namespace Core
 
                 // Joining/leaving channels
                 case 5:
-                    if(bool.Parse(data[1]))
+                    if(int.Parse(data[1]) < 1)
                     {
                         // Joined the channel
                         lastUser = Users.Add(int.Parse(data[2]), data[3], data[4], data[5]);

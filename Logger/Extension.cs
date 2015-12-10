@@ -85,7 +85,7 @@ namespace Logger
                     }
                     break;
                 case 5:
-                    logLine += "* " + Chat.lastUser.userName + " " + (bool.Parse(data[1]) ? "joined" : "left") + " the channel.";
+                    logLine += "* " + Chat.lastUser.userName + " " + (data[1] == "0" ? "joined" : "left") + " the channel.";
                     break;
                 case 7:
                     if(int.Parse(data[1]) == 0)
