@@ -34,6 +34,15 @@ namespace Flap
 
             if (data[0] == "2" && message.StartsWith("!flap"))
             {
+                // Check flood limit
+                if (Chat.CheckFlood(int.Parse(data[2])))
+                {
+                    return;
+                }
+
+                // Update flood limit
+                Chat.UpdateFlood(int.Parse(data[2]));
+
                 // Create vars
                 string sendMessage = "";
                 Random random = new Random();

@@ -99,7 +99,16 @@ namespace Responses
 
             if(trigger != null)
             {
-                foreach(string responseRaw in trigger.Responses[(new Random()).Next(trigger.Responses.Count)])
+                // Check flood limit
+                if (Chat.CheckFlood(int.Parse(data[2])))
+                {
+                    return;
+                }
+
+                // Update flood limit
+                Chat.UpdateFlood(int.Parse(data[2]));
+
+                foreach (string responseRaw in trigger.Responses[(new Random()).Next(trigger.Responses.Count)])
                 {
                     // Get user details
                     User user = Users.Get(int.Parse(data[2]));

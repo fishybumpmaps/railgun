@@ -40,7 +40,7 @@ namespace LastFM
             if (cached != null)
             {
                 TimeSpan cacheAge = DateTime.Now - cached.date;
-                if (cacheAge.TotalMinutes <= 2)
+                if (cacheAge.TotalSeconds <= 30)
                 {
                     Log.Write(0, "LastFM", "Getting " + action + " from cache.");
                     return cached.data;

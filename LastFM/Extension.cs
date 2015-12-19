@@ -46,6 +46,15 @@ namespace LastFM
                 // !np
                 if (message.StartsWith("!np"))
                 {
+                    // Check flood limit
+                    if (Chat.CheckFlood(int.Parse(data[2])))
+                    {
+                        return;
+                    }
+
+                    // Update flood limit
+                    Chat.UpdateFlood(int.Parse(data[2]));
+
                     string[] cArgs = message.Substring(1).Split(' ');
 
                     // Create a WebClient object

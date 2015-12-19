@@ -31,6 +31,7 @@ namespace Responses
                     return;
             } catch { }
 
+            // Forward to the handler
             Responses.Handle(data);
         }
     }

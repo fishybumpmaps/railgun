@@ -11,7 +11,7 @@ namespace Core
         public static int userId = 0; // Chatbot user ID
         public static string userName = ""; // " " name
         private static Dictionary<int, DateTime> floodLimit = new Dictionary<int, DateTime>(); // Per user flood limit
-        public static int messageLimit = 0;
+        public static int messageLimit = 5;
         public static int lastSender = 0;
         public static User lastUser;
 
@@ -45,7 +45,7 @@ namespace Core
             // Get the value for the current user
             TimeSpan currentUserFlood = DateTime.Now - floodLimit[userId];
 
-            // Check if it has been 30 seconds since the last action
+            // Check if it has been 5 seconds since the last action
             if (currentUserFlood.TotalSeconds < messageLimit)
             {
                 return true;
@@ -80,15 +80,6 @@ namespace Core
 
                     lastUser = user;
 
-                    // Check flood limit
-                    if (CheckFlood(user.id))
-                    {
-                        return;
-                    }
-
-                    // Update flood limit
-                    UpdateFlood(user.id);
-
                     // Update lastSender
                     lastSender = user.id;
 
@@ -98,6 +89,15 @@ namespace Core
                     // Internal commands
                     if (message.StartsWith("!"))
                     {
+                        // Check flood limit
+                        if (CheckFlood(user.id))
+                        {
+                            break;
+                        }
+
+                        // Update flood limit
+                        UpdateFlood(user.id);
+
                         string[] cArgs = message.Substring(1).Split(' ');
 
                         switch(cArgs[0])
