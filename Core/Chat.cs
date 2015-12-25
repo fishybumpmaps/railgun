@@ -11,7 +11,7 @@ namespace Core
         public static int userId = 0; // Chatbot user ID
         public static string userName = ""; // " " name
         private static Dictionary<int, DateTime> floodLimit = new Dictionary<int, DateTime>(); // Per user flood limit
-        public static int messageLimit = 5;
+        public static int messageLimit = 10;
         public static int lastSender = 0;
         public static User lastUser;
 

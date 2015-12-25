@@ -56,7 +56,7 @@ namespace Core
                         if (data[0] == "1" && data[1] == "n")
                         {
                             connected = false;
-                            Log.Write(2, "Core", "Authentication failed. Check your authentication data in Satori.ini!");
+                            Log.Write(2, "Core", "Authentication failed. Check your authentication data in Config.ini!");
                         } else if(data[0] == "1" && data[1] == "y")
                         {
                             connected = true;
