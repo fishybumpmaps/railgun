@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Shinoa Responses")]
-[assembly: AssemblyDescription("Responses module for Shinoa")]
+[assembly: AssemblyTitle("Railgun Responses")]
+[assembly: AssemblyDescription("Responses module for Railgun")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Shinoa Responses")]
-[assembly: AssemblyCopyright("Copyright © Flashwave 2015")]
+[assembly: AssemblyProduct("Railgun Responses")]
+[assembly: AssemblyCopyright("Copyright © Flashwave 2016")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

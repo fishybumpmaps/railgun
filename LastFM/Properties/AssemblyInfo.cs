@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Shinoa Last.fm")]
-[assembly: AssemblyDescription("LastFM module for Shinoa")]
+[assembly: AssemblyTitle("Railgun Last.fm")]
+[assembly: AssemblyDescription("LastFM module for Railgun")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Shinoa Last.fm")]
-[assembly: AssemblyCopyright("Copyright © Flashwave 2015")]
+[assembly: AssemblyProduct("Railgun Last.fm")]
+[assembly: AssemblyCopyright("Copyright © Flashwave 2016")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
