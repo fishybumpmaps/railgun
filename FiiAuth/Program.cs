@@ -1,27 +1,73 @@
-﻿using System;
+﻿using Core;
+using System;
 using System.Net;
-using System.Windows.Forms;
 
 namespace FiiAuth
 {
-    static class Program
+    class Program
     {
-        // Login data
-        public static int userId = 0;
-        public static string sessionId = "";
-
-        /// <summary>
-        /// The main entry point for the application.
-        /// </summary>
-        [STAThread]
-        static void Main()
+        static void Main(string[] args)
         {
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new LoginWindow());
+            Log.Write(0, "FiiAuth", "Flashii.net Authentication Helper");
+            Config.Init();
+
+            bool loginDone = false;
+
+            do {
+                string[] auth = StartAuth();
+                string[] loginAttempt = Login(auth[0], auth[1]);
+                Console.WriteLine(auth[0]);
+                Console.WriteLine(auth[1]);
+
+                switch (int.Parse(loginAttempt[2]))
+                {
+                    case 4:
+                        Log.Write(1, "FiiAuth", "Incorrect password.");
+                        break;
+
+                    case 3:
+                        Log.Write(1, "FiiAuth", "Your account is restricted.");
+                        break;
+
+                    case 2:
+                        Log.Write(1, "FiiAuth", "User doesn't exist.");
+                        break;
+
+                    case 1:
+                        Log.Write(0, "FiiAuth", "Login successful!");
+
+                        // Attempt to save credentials
+                        Config.Write("Auth", "arg1", loginAttempt[0]);
+                        Config.Write("Auth", "arg2", loginAttempt[1]);
+                        return;
+
+                    case 0:
+                        Log.Write(2, "FiiAuth", "Empty result?");
+                        break;
+
+                    default:
+                        Log.Write(2, "FiiAuth", "Something happened.");
+                        break;
+                }
+            } while (!loginDone);
+
+            Log.Write(0, "FiiAuth", "Railgun.exe should now be able to authenticate with Flashii Chat.");
         }
 
-        public static int login(string userName, string password)
+        static string[] StartAuth()
+        {
+            string[] result = new string[2];
+
+            Console.Write("Username: ");
+            result[0] = Console.ReadLine();
+
+            Console.Write("Password: ");
+            result[1] = Console.ReadLine();
+
+            return result;
+        }
+
+        static string[] Login(string userName, string password)
         {
             // Set parameters
             string postLocation = "//flashii.net/spookyshit/login.php";
@@ -33,7 +79,7 @@ namespace FiiAuth
             using (WebClient wc = new WebClient())
             {
                 // Set headers
-                wc.Headers["User-Agent"] = "Flashii Chat Windows";
+                wc.Headers["User-Agent"] = "Railgun Flashii Authentication Helper";
                 wc.Headers["Content-Type"] = "application/x-www-form-urlencoded";
                 // Make request
                 try
@@ -49,7 +95,7 @@ namespace FiiAuth
                 using (WebClient wc = new WebClient())
                 {
                     // Set headers
-                    wc.Headers["User-Agent"] = "Flashii Chat Windows (Unsecure fallback)";
+                    wc.Headers["User-Agent"] = "Railgun Flashii Authentication Helper";
                     wc.Headers["Content-Type"] = "application/x-www-form-urlencoded";
                     // Make request
                     try
@@ -64,23 +110,22 @@ namespace FiiAuth
             // If success is still false display an error and return false
             if (!success)
             {
-                MessageBox.Show("Check your internet connection, both https and http failed to connect.");
+                Log.Write(2, "FiiAuth", "Check your internet connection, both https and http failed to connect.");
             }
 
             // Check if we got anything back
             if (result.Length > 0)
             {
                 // Split the result
-                string[] res = result.Split('|');
-                
-                // Assign the variables
-                userId = int.Parse(res[0]);
-                sessionId = res[1];
-                return int.Parse(res[2]);
+                return result.Split('|');
             }
             else
             {
-                return 0;
+                string[] end = new string[3];
+                end[0] = "0";
+                end[1] = "0";
+                end[2] = "0";
+                return end;
             }
         }
     }

@@ -6,11 +6,11 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("FiiAuth")]
-[assembly: AssemblyDescription("Flashii Authentication Tool")]
+[assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("FiiAuth")]
-[assembly: AssemblyCopyright("Copyright © Flashwave 2016")]
+[assembly: AssemblyCopyright("Copyright ©  2016")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("e1b77c88-37bb-4380-978c-d1fa5bac5c8a")]
+[assembly: Guid("5e07c514-cb5f-4ce4-a9d8-2bf39e42ae9f")]
 
 // Version information for an assembly consists of the following four values:
 //
