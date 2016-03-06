@@ -257,12 +257,12 @@ namespace Core
                     break;
             }
 
-            foreach(IExtension extension in Core.Extensions)
+            /*foreach(IExtension extension in Core.Extensions)
             {
                 new Thread(delegate () {
                     extension.Handle(data);
                 }).Start();
-            }
+            }*/
         }
     }
 }

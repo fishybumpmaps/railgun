@@ -19,11 +19,11 @@ namespace LastFM
         public void Initialise()
         {
             Log.Write(0, "LastFM", "Loading Last.FM settings.");
-            string osuApiKey = Utils.GetSettings().Read("LastFM", "apiKey");
+            string osuApiKey = Config.Read("LastFM", "apiKey");
 
             if (osuApiKey.Length < 1)
             {
-                Utils.GetSettings().Write("LastFM", "apiKey", "api_key_here");
+                Config.Write("LastFM", "apiKey", "api_key_here");
                 Log.Write(1, "LastFM", "No API key was set in the settings file, a placeholder value has been created!");
             }
             else

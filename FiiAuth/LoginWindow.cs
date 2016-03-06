@@ -43,9 +43,8 @@ namespace FiiAuth
                     statusBox.Text = "Login successful!";
 
                     // Attempt to save credentials
-                    Ini settings = new Ini(Directory.GetCurrentDirectory() + "/Config.ini");
-                    settings.Write("Auth", "arg1", Program.userId.ToString());
-                    settings.Write("Auth", "arg2", Program.sessionId);
+                    Config.Write("Auth", "arg1", Program.userId.ToString());
+                    Config.Write("Auth", "arg2", Program.sessionId);
 
                     // Create a close interval timer
                     Timer timer = new Timer();

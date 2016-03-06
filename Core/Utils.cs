@@ -14,9 +14,5 @@ namespace Core
             // ^^;
             return Core.directories;
         }
-        public static Ini GetSettings()
-        {
-            return Core.settings;
-        }
     }
 }

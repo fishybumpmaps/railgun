@@ -8,7 +8,6 @@ namespace Core
 {
     class Core
     {
-        public static Ini settings; // INI interface container
         public static Sock sock; // Sock interface container
         public static string[] directories = { "Logs", "Extensions", "Data" }; // Logs directory name
         private static ManualResetEvent shutdown = new ManualResetEvent(false); // Thing to keep the console window running
@@ -60,24 +59,20 @@ namespace Core
             // Loading the settings
             Log.Write(0, "Core", "Attempting to load settings...");
 
-            // Initialise INI class
-            try {
-                settings = new Ini(Directory.GetCurrentDirectory() + "/Config.ini");
-            } catch {
-                Log.Write(0, "Core", "Settings file doesn't exist. Attempting to create a blank one.");
-            }
-            settings.Write("Meta", "last_started", DateTime.Now.ToString());
-            Log.Write(0, "Core", "Loaded settings!");
+            // Make sure the config exists
+            Config.Init();
+            Config.Write("Meta", "last_started", DateTime.Now.ToString());
+            Log.Write(0, "Core", "Initialised configuration!");
 
             // Set flood limit
             Log.Write(0, "Core", "Setting message limit...");
             try {
-                Chat.messageLimit = int.Parse(settings.Read("Meta", "flood_limit"));
+                Chat.messageLimit = int.Parse(Config.Read("Meta", "flood_limit"));
             } catch
             {
                 Log.Write(1, "Core", "No message limit was set, the default value of 10 seconds has been written to the config!");
                 Chat.messageLimit = 10;
-                settings.Write("Meta", "flood_limit", "10");
+                Config.Write("Meta", "flood_limit", "10");
             }
 
             // Initialise user handler
@@ -88,19 +83,32 @@ namespace Core
             Log.Write(0, "Core", "Users handler initialised.");
 
             // Loading extensions
-            LoadExtensions();
+            //LoadExtensions();
 
             // Check if required configuration variables exist
-            if (settings.Read("Meta", "server").Length < 1)
+            if (Config.Read("Meta", "server").Length < 1)
             {
-                settings.Write("Meta", "server", "localhost");
+                Config.Write("Meta", "server", "localhost");
                 Log.Write(1, "Core", "A server variable was not set in the config!");
                 Log.Write(0, "Core", "A placeholder was created, please make sure to update this to the correct server address!");
             }
             
             // Attempt to connect to chat server
             Log.Write(0, "Core", "Connecting to chat server...");
-            sock = new Sock(settings.Read("Meta", "server"), settings.Section("Auth", true).ToArray());
+
+            // Create a new list
+            List<string> auth = new List<string>();
+
+            // Grab the auth section from the config
+            List<KeyValuePair<string, string>> authSection = Config.Section("Auth");
+
+            // Iterate over the entries the the Auth section of the config
+            foreach (KeyValuePair<string, string> part in authSection)
+            {
+                auth.Add(part.Value);
+            }
+
+            sock = new Sock(Config.Read("Meta", "server"), auth.ToArray());
 
             // Wait for the connection
             while (sock.connected != true) { }
@@ -130,10 +138,10 @@ namespace Core
 
             Log.Write(0, "Core", "Destructing loaded extensions.");
 
-            foreach (IExtension extension in Extensions)
+            /*foreach (IExtension extension in Extensions)
             {
                 extension.Destruct();
-            }
+            }*/
 
             Log.Write(0, "Core", "Good bye!");
 

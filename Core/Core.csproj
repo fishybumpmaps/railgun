@@ -69,7 +69,7 @@
   <ItemGroup>
     <Compile Include="Chat.cs" />
     <Compile Include="ExtensionLoader.cs" />
-    <Compile Include="Ini.cs" />
+    <Compile Include="Config.cs" />
     <Compile Include="Log.cs" />
     <Compile Include="Message.cs" />
     <Compile Include="Core.cs" />

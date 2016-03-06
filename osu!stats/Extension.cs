@@ -148,11 +148,11 @@ namespace osuStats
         public void Initialise()
         {
             Log.Write(0, "osu!stats", "Loading osu!stats settings.");
-            string osuApiKey = Utils.GetSettings().Read("OsuStats", "apiKey");
+            string osuApiKey = Config.Read("OsuStats", "apiKey");
 
             if(osuApiKey.Length < 1)
             {
-                Utils.GetSettings().Write("OsuStats", "apiKey", "api_key_here");
+                Config.Write("OsuStats", "apiKey", "api_key_here");
                 Log.Write(1, "osu!stats", "No API key was set in the settings file, a placeholder value has been created!");
             } else {
                 osuStats.SetApiKey(osuApiKey);
