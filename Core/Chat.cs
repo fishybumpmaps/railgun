@@ -45,7 +45,7 @@ namespace Core
             // Get the value for the current user
             TimeSpan currentUserFlood = DateTime.Now - floodLimit[userId];
 
-            // Check if it has been 5 seconds since the last action
+            // Check if it has been x seconds since the last action
             if (currentUserFlood.TotalSeconds < messageLimit)
             {
                 return true;
@@ -70,7 +70,7 @@ namespace Core
                 // User joining
                 case 1:
                     lastUser = Users.Add(int.Parse(data[2]), data[3], data[4], data[5]);
-                    Log.Write(0, "Core", data[3] + " has joined.");
+                    Log.Write(LogLevels.INFO, "Core", data[3] + " has joined.");
                     break;
 
                 // Chat messages
@@ -86,24 +86,24 @@ namespace Core
                     // Strip bbcodes
                     string message = Regex.Replace(data[3], @"\[[^]]+\]", "");
 
+                    // Check flood limit
+                    if (CheckFlood(user.id))
+                    {
+                        return;
+                    }
+
+                    // Update flood limit
+                    UpdateFlood(user.id);
+
                     // Internal commands
                     if (message.StartsWith("!"))
                     {
-                        // Check flood limit
-                        if (CheckFlood(user.id))
-                        {
-                            break;
-                        }
-
-                        // Update flood limit
-                        UpdateFlood(user.id);
-
                         string[] cArgs = message.Substring(1).Split(' ');
 
                         switch(cArgs[0])
                         {
                             case "extensions:reload":
-                                Log.Write(0, "Core", "Extension reload was issued by " + user.userName);
+                                Log.Write(LogLevels.INFO, "Core", "Extension reload was issued by " + user.userName);
                                 SendMessage("Reloading all extensions...");
                                 Core.LoadExtensions();
                                 SendMessage("Finished!");
@@ -139,14 +139,16 @@ namespace Core
                                 break;
                                 
                             case "debug:quit":
-                                Core.Shutdown(null, null);
+                                if (data[2] == "2") {
+                                    Core.Shutdown(null, null);
+                                }
                                 break;
 #endif
                         }
                     }
 
                     // Write message to console
-                    Log.Write(0, "Core", "<" + user.userName + "> "+ data[3]);
+                    Log.Write(LogLevels.INFO, "Core", "<" + user.userName + "> "+ data[3]);
                     break;
 
                 // User disconnect notification
@@ -161,22 +163,22 @@ namespace Core
                     {
                         case "leave":
                             // Left on own accord
-                            Log.Write(0, "Core", user.userName + " has disconnected.");
+                            Log.Write(LogLevels.INFO, "Core", user.userName + " has disconnected.");
                             break;
                         case "kick":
                             // Kick
-                            Log.Write(0, "Core", user.userName + " has been kicked.");
+                            Log.Write(LogLevels.INFO, "Core", user.userName + " has been kicked.");
                             break;
                         default:
                             // Somehow else
-                            Log.Write(0, "Core", user.userName + " jumped out of a window and is no longer with us.");
+                            Log.Write(LogLevels.INFO, "Core", user.userName + " jumped out of a window and is no longer with us.");
                             break;
                     }
                     break;
 
                 // Channel updates
                 case 4:
-                    Log.Write(0, "Core", "A channel update occurred.");
+                    Log.Write(LogLevels.INFO, "Core", "A channel update occurred.");
                     break;
 
                 // Joining/leaving channels
@@ -185,19 +187,19 @@ namespace Core
                     {
                         // Joined the channel
                         lastUser = Users.Add(int.Parse(data[2]), data[3], data[4], data[5]);
-                        Log.Write(0, "Core", data[3] + " has joined the channel.");
+                        Log.Write(LogLevels.INFO, "Core", data[3] + " has joined the channel.");
                     } else
                     {
                         // Left the channel
                         user = Users.Remove(int.Parse(data[2]));
                         lastUser = user;
-                        Log.Write(0, "Core", user.userName + " has left the channel.");
+                        Log.Write(LogLevels.INFO, "Core", user.userName + " has left the channel.");
                     }
                     break;
 
                 // Message deletion
                 case 6:
-                    Log.Write(0, "Core", "A message was deleted.");
+                    Log.Write(LogLevels.INFO, "Core", "A message was deleted.");
                     break;
 
                 // Chat population
@@ -214,7 +216,7 @@ namespace Core
                             for (int i = 0; i < usersAmount; i++)
                             {
                                 Users.Add(int.Parse(data[startIndex]), data[startIndex + 1], data[startIndex + 2], data[startIndex + 3]);
-                                Log.Write(0, "Core", data[startIndex + 1] + " is already logged in.");
+                                Log.Write(LogLevels.INFO, "Core", data[startIndex + 1] + " is already logged in.");
                                 startIndex = startIndex + 5;
                             }
                             break;
@@ -233,7 +235,7 @@ namespace Core
 
                 // Forcefully clear a context list
                 case 8:
-                    Log.Write(0, "Core", "A force clear was issued.");
+                    Log.Write(LogLevels.INFO, "Core", "A force clear was issued.");
                     break;
 
                 // Kick/ban
@@ -241,10 +243,10 @@ namespace Core
                     if(data[1] == "ban")
                     {
                         DateTime until = Utils.EpochFrom(long.Parse(data[2]));
-                        Log.Write(0, "Core", "The bot was banned until " + until.ToString("R") + ", attempting reconnect after the ban is supposed to expire.");
+                        Log.Write(LogLevels.INFO, "Core", "The bot was banned until " + until.ToString("R") + ", attempting reconnect after the ban is supposed to expire.");
                     } else
                     {
-                        Log.Write(0, "Core", "The bot has been kicked, attempting to restart the connection.");
+                        Log.Write(LogLevels.INFO, "Core", "The bot has been kicked, attempting to restart the connection.");
                     }
                     Core.sock.CloseConnection();
                     Core.sock = null;
@@ -253,16 +255,16 @@ namespace Core
                 // User information has been updated
                 case 10:
                     lastUser = Users.Update(int.Parse(data[1]), data[2], data[3], data[4]);
-                    Log.Write(0, "Core", "A user was updated.");
+                    Log.Write(LogLevels.INFO, "Core", "A user was updated.");
                     break;
             }
 
-            /*foreach(IExtension extension in Core.Extensions)
+            foreach(IExtension extension in Core.Extensions)
             {
                 new Thread(delegate () {
                     extension.Handle(data);
                 }).Start();
-            }*/
+            }
         }
     }
 }

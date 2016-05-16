@@ -16,7 +16,7 @@ namespace Responses
         public void Initialise()
         {
             Responses.Load();
-            Log.Write(0, "Responses", "Initialised Responses extension.");
+            Log.Write(LogLevels.INFO, "Responses", "Initialised Responses extension.");
         }
 
         public void Destruct()

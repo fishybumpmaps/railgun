@@ -14,13 +14,14 @@ namespace Core
         // Initialise
         public static void Init()
         {
-            Log.Write(0, "Config", "Initialising configuration.");
+            Log.Write(LogLevels.INFO, "Config", "Initialising configuration.");
 
             // Check if the file exists
             if (!File.Exists(path))
             {
-                Log.Write(0, "Config", "Configuration file doesn't exists, creating a new file.");
-                File.Create("Config.ini");
+                Log.Write(LogLevels.INFO, "Config", "Configuration file doesn't exists, creating a new file.");
+                FileStream config = File.Create("Config.ini");
+                config.Close();
             }
         }
 

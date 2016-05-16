@@ -21,17 +21,17 @@ namespace Logger
 
         public void Initialise()
         {
-            Log.Write(0, "Logger", "Initialised Chat Logger.");
+            Log.Write(LogLevels.INFO, "Logger", "Initialised Chat Logger.");
             
             // Create log filename
             string filename = "chat_" + DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss") + ".log";
             // Check if the destination directory exists
-            if (!Directory.Exists(Utils.GetDirectories()[2] + "/ChatLogs/"))
+            if (!Directory.Exists(Core.Core.directories[2] + "/ChatLogs/"))
             {
-                Directory.CreateDirectory(Utils.GetDirectories()[2] + "/ChatLogs/");
+                Directory.CreateDirectory(Core.Core.directories[2] + "/ChatLogs/");
             }
             // Create stream writer
-            logWriter = new StreamWriter(Utils.GetDirectories()[2] + "/ChatLogs/" + filename);
+            logWriter = new StreamWriter(Core.Core.directories[2] + "/ChatLogs/" + filename);
             // Enable auto flush
             logWriter.AutoFlush = true;
 
@@ -40,7 +40,7 @@ namespace Logger
             logWriter.WriteLine("=================================================================");
 
             active = true;
-            Log.Write(0, "Logger", "Logging chat to file " + filename + ".");
+            Log.Write(LogLevels.INFO, "Logger", "Logging chat to file " + filename + ".");
         }
 
         public void Destruct()
@@ -48,7 +48,7 @@ namespace Logger
             active = false;
             logWriter.Close();
             logWriter = null;
-            Log.Write(0, "Logger", "Stopped logging the chat.");
+            Log.Write(LogLevels.INFO, "Logger", "Stopped logging the chat.");
         }
 
         public void Handle(string[] data)

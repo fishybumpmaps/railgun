@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 using System.Linq;
 using System;
 
-namespace osuStats
+namespace osu
 {
     static class osuStats
     {
@@ -33,21 +33,21 @@ namespace osuStats
 
             WebClient webClient = new WebClient();
 
-            webClient.Headers["User-Agent"] = "Shinoa osu!stats extension";
+            webClient.Headers["User-Agent"] = "Railgun osu!stats extension";
 
             try
             {
-                Log.Write(0, "osu!stats", "Attempting to do " + action + "...");
+                Log.Write(LogLevels.INFO, "osu!stats", "Attempting to do " + action + "...");
                 cache = webClient.DownloadString("https://" + url);
             } catch
             {
                 try
                 {
-                    Log.Write(1, "osu!stats", "Falling back to insecure HTTP...");
+                    Log.Write(LogLevels.WARNING, "osu!stats", "Falling back to insecure HTTP...");
                     cache = webClient.DownloadString("http://" + url);
                 } catch
                 {
-                    Log.Write(2, "osu!stats", "Failed to connect to the osu!api!");
+                    Log.Write(LogLevels.ERROR, "osu!stats", "Failed to connect to the osu!api!");
                 }
             }
 
@@ -67,7 +67,7 @@ namespace osuStats
                 TimeSpan cacheAge = DateTime.Now - cached.date;
                 if (cacheAge.TotalMinutes <= 5)
                 {
-                    Log.Write(0, "osu!stats", "Getting " + user + " from cache.");
+                    Log.Write(LogLevels.INFO, "osu!stats", "Getting " + user + " from cache.");
                     return cached.data;
                 } else
                 {
@@ -90,7 +90,7 @@ namespace osuStats
             }
 
             // Add to cache
-            Log.Write(0, "osu!stats", "Added " + user + " to cache.");
+            Log.Write(LogLevels.INFO, "osu!stats", "Added " + user + " to cache.");
             userCache.Add(new UserCache() {
                 date = DateTime.Now,
                 username = user,

@@ -42,7 +42,7 @@ namespace LastFM
                 TimeSpan cacheAge = DateTime.Now - cached.date;
                 if (cacheAge.TotalSeconds <= 30)
                 {
-                    Log.Write(0, "LastFM", "Getting " + action + " from cache.");
+                    Log.Write(LogLevels.INFO, "LastFM", "Getting " + action + " from cache.");
                     return cached.data;
                 }
                 else
@@ -53,29 +53,29 @@ namespace LastFM
 
             WebClient webClient = new WebClient();
 
-            webClient.Headers["User-Agent"] = "Shinoa Last.FM Extension";
+            webClient.Headers["User-Agent"] = "Railgun Last.FM Extension";
             webClient.Encoding = Encoding.UTF8;
 
             try
             {
-                Log.Write(0, "LastFM", "Attempting to do " + action + "...");
+                Log.Write(LogLevels.INFO, "LastFM", "Attempting to do " + action + "...");
                 cache.LoadXml(webClient.DownloadString("https://" + url));
             }
             catch
             {
                 try
                 {
-                    Log.Write(1, "LastFM", "Falling back to insecure HTTP...");
+                    Log.Write(LogLevels.WARNING, "LastFM", "Falling back to insecure HTTP...");
                     cache.LoadXml(webClient.DownloadString("http://" + url));
                 }
                 catch
                 {
-                    Log.Write(2, "LastFM", "Failed to connect to the Last.FM API!");
+                    Log.Write(LogLevels.ERROR, "LastFM", "Failed to connect to the Last.FM API!");
                 }
             }
 
             // Add to cache
-            Log.Write(0, "LastFM", "Added " + action + " to cache.");
+            Log.Write(LogLevels.INFO, "LastFM", "Added " + action + " to cache.");
             apiCache.Add(new ApiCache()
             {
                 date = DateTime.Now,

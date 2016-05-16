@@ -19,27 +19,38 @@ namespace Core
         }
 
         // Logging function
-        public static void Write(int type, string module, string text)
+        public static void Write(LogLevels type, string module, string text)
         {
             // Define some variables
-            string eventType, logLine;
+            string eventType,
+                   logLine = "[{0}] [{1}] [{2}] {3}";
+            string[] logArgs;
 
             // Get the right textual value for the type
             switch (type)
             {
-                case 2:
+                case LogLevels.ERROR:
                     eventType = "ERROR";
                     break;
-                case 1:
+
+                case LogLevels.WARNING:
                     eventType = "WARNING";
                     break;
+
                 default:
                     eventType = "INFO";
                     break;
             }
 
+            logArgs = new string[4] {
+                DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
+                module,
+                eventType,
+                text
+            };
+
             // Create a log line
-            logLine = "[" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "] [" + module + "] [" + eventType + "] " + text;
+            logLine = string.Format(logLine, logArgs);
 
             // Log if the logWriter isn't null
             try

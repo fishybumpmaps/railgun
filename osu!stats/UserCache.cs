@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace osuStats
+namespace osu
 {
     class UserCache
     {

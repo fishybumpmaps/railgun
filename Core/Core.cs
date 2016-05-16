@@ -6,7 +6,7 @@ using Extensions;
 
 namespace Core
 {
-    class Core
+    public static class Core
     {
         public static Sock sock; // Sock interface container
         public static string[] directories = { "Logs", "Extensions", "Data" }; // Logs directory name
@@ -23,16 +23,16 @@ namespace Core
         // Extensions (re)loader
         public static void LoadExtensions()
         {
-            Log.Write(0, "Core", "Loading extensions...");
+            Log.Write(LogLevels.INFO, "Core", "Loading extensions...");
             Extensions = ExtensionLoader.LoadExtensions(directories[1]);
-            Log.Write(0, "Core", "Loaded extensions!");
+            Log.Write(LogLevels.INFO, "Core", "Loaded extensions!");
         }
 
         // Main function
         static void Main(string[] args)
         {
             // Set console title
-            Console.Title = "Shinoa";
+            Console.Title = "Railgun";
 
             // Check if mandatory directories exist.
             foreach (var dir in directories)
@@ -49,52 +49,52 @@ namespace Core
             Log.Init(directories[0] + "/" + logFileName);
 
             // Print start
-            Log.Write(0, "Core", "Shinoa");
+            Log.Write(LogLevels.INFO, "Core", "Railgun");
 #if DEBUG
-            Log.Write(0, "Core", "This is a debug build, things might not turn out as expected.");
+            Log.Write(LogLevels.INFO, "Core", "This is a debug build, things might not turn out as expected.");
 #endif
-            Log.Write(0, "Core", "Starting...");
-            Log.Write(0, "Core", "All output console is being logged to " + directories[0] + "/" + logFileName);
+            Log.Write(LogLevels.INFO, "Core", "Starting...");
+            Log.Write(LogLevels.INFO, "Core", "All output console is being logged to " + directories[0] + "/" + logFileName);
 
             // Loading the settings
-            Log.Write(0, "Core", "Attempting to load settings...");
+            Log.Write(LogLevels.INFO, "Core", "Attempting to load settings...");
 
             // Make sure the config exists
             Config.Init();
             Config.Write("Meta", "last_started", DateTime.Now.ToString());
-            Log.Write(0, "Core", "Initialised configuration!");
+            Log.Write(LogLevels.INFO, "Core", "Initialised configuration!");
 
             // Set flood limit
-            Log.Write(0, "Core", "Setting message limit...");
+            Log.Write(LogLevels.INFO, "Core", "Setting message limit...");
             try {
                 Chat.messageLimit = int.Parse(Config.Read("Meta", "flood_limit"));
             } catch
             {
-                Log.Write(1, "Core", "No message limit was set, the default value of 10 seconds has been written to the config!");
+                Log.Write(LogLevels.WARNING, "Core", "No message limit was set, the default value of 10 seconds has been written to the config!");
                 Chat.messageLimit = 10;
                 Config.Write("Meta", "flood_limit", "10");
             }
 
             // Initialise user handler
-            Log.Write(0, "Core", "Initialising Users handler...");
+            Log.Write(LogLevels.INFO, "Core", "Initialising Users handler...");
             Users.Init();
-            Log.Write(0, "Core", "Adding ChatBot user...");
+            Log.Write(LogLevels.INFO, "Core", "Adding ChatBot user...");
             Users.Add(-1, "ChatBot", "#9E8DA7", "0 0 0 0 0");
-            Log.Write(0, "Core", "Users handler initialised.");
+            Log.Write(LogLevels.INFO, "Core", "Users handler initialised.");
 
             // Loading extensions
-            //LoadExtensions();
+            LoadExtensions();
 
             // Check if required configuration variables exist
             if (Config.Read("Meta", "server").Length < 1)
             {
                 Config.Write("Meta", "server", "localhost");
-                Log.Write(1, "Core", "A server variable was not set in the config!");
-                Log.Write(0, "Core", "A placeholder was created, please make sure to update this to the correct server address!");
+                Log.Write(LogLevels.WARNING, "Core", "A server variable was not set in the config!");
+                Log.Write(LogLevels.INFO, "Core", "A placeholder was created, please make sure to update this to the correct server address!");
             }
             
             // Attempt to connect to chat server
-            Log.Write(0, "Core", "Connecting to chat server...");
+            Log.Write(LogLevels.INFO, "Core", "Connecting to chat server...");
 
             // Create a new list
             List<string> auth = new List<string>();
@@ -123,7 +123,7 @@ namespace Core
         public static void Shutdown(object sender = null, ConsoleCancelEventArgs args = null)
         {
             // Log the thing
-            Log.Write(0, "Core", "Stopping...");
+            Log.Write(LogLevels.INFO, "Core", "Stopping...");
 
             // Close sock chat connection if active
             try
@@ -131,19 +131,19 @@ namespace Core
                 if (sock.connected)
                 {
                     sock.CloseConnection();
-                    Log.Write(0, "Core", "Disconnected from chat.");
+                    Log.Write(LogLevels.INFO, "Core", "Disconnected from chat.");
                 }
             }
             catch { }
 
-            Log.Write(0, "Core", "Destructing loaded extensions.");
+            Log.Write(LogLevels.INFO, "Core", "Destructing loaded extensions.");
 
-            /*foreach (IExtension extension in Extensions)
+            foreach (IExtension extension in Extensions)
             {
                 extension.Destruct();
-            }*/
+            }
 
-            Log.Write(0, "Core", "Good bye!");
+            Log.Write(LogLevels.INFO, "Core", "Good bye!");
 
             shutdown.Set();
 

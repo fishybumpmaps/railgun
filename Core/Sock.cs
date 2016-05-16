@@ -40,9 +40,7 @@ namespace Core
                 case Opcode.Text:
                     // Unpack the returned message
                     string[] data = Message.Unpack(e.Data);
-#if DEBUG
-                    Log.Write(0, "RawSock", e.Data);
-#endif
+
                     // Check if we're already connected
                     if (connected)
                     {
@@ -56,7 +54,7 @@ namespace Core
                         if (data[0] == "1" && data[1] == "n")
                         {
                             connected = false;
-                            Log.Write(2, "Core", "Authentication failed. Check your authentication data in Config.ini!");
+                            Log.Write(LogLevels.ERROR, "Core", "Authentication failed. Check your authentication data in Config.ini!");
                         } else if(data[0] == "1" && data[1] == "y")
                         {
                             connected = true;
@@ -64,12 +62,12 @@ namespace Core
                             Chat.userName = data[3];
                             keepAliveStr = data[2];
                             Users.Add(int.Parse(data[2]), data[3], data[4], data[5]);
-                            Log.Write(0, "Core", "Connected!");
+                            Log.Write(LogLevels.INFO, "Core", "Connected!");
                         }
                     }
                     break;
                 default:
-                    Log.Write(1, "Core", "Received non-text data, ignoring.");
+                    Log.Write(LogLevels.WARNING, "Core", "Received non-text data, ignoring.");
                     break;
             }
         }
@@ -80,11 +78,11 @@ namespace Core
             connectFails += 1;
 
             if (connectFails <= 5) {
-                Log.Write(1, "Core", "An error occurred in the connection, will attempt to recover.");
+                Log.Write(LogLevels.WARNING, "Core", "An error occurred in the connection, will attempt to recover.");
                 CloseConnection();
                 OpenConnection();
             } else {
-                Log.Write(2, "Core", "Failed to restart the connection 5 times, terminating the bot.");
+                Log.Write(LogLevels.ERROR, "Core", "Failed to restart the connection 5 times, terminating the bot.");
                 Core.Shutdown();
             }
         }
@@ -102,7 +100,7 @@ namespace Core
             try {
                 ws.Send(data);
             } catch {
-                Log.Write(2, "Core", "Sending data failed?");
+                Log.Write(LogLevels.ERROR, "Core", "Sending data failed?");
                 ConnectionError(null, null);
             }
 

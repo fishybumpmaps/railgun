@@ -8,7 +8,7 @@ namespace FiiAuth
     {
         static void Main(string[] args)
         {
-            Log.Write(0, "FiiAuth", "Flashii.net Authentication Helper");
+            Log.Write(LogLevels.INFO, "FiiAuth", "Flashii.net Authentication Helper");
             Config.Init();
 
             bool loginDone = false;
@@ -22,19 +22,19 @@ namespace FiiAuth
                 switch (int.Parse(loginAttempt[2]))
                 {
                     case 4:
-                        Log.Write(1, "FiiAuth", "Incorrect password.");
+                        Log.Write(LogLevels.WARNING, "FiiAuth", "Incorrect password.");
                         break;
 
                     case 3:
-                        Log.Write(1, "FiiAuth", "Your account is restricted.");
+                        Log.Write(LogLevels.WARNING, "FiiAuth", "Your account is restricted.");
                         break;
 
                     case 2:
-                        Log.Write(1, "FiiAuth", "User doesn't exist.");
+                        Log.Write(LogLevels.WARNING, "FiiAuth", "User doesn't exist.");
                         break;
 
                     case 1:
-                        Log.Write(0, "FiiAuth", "Login successful!");
+                        Log.Write(LogLevels.INFO, "FiiAuth", "Login successful!");
 
                         // Attempt to save credentials
                         Config.Write("Auth", "arg1", loginAttempt[0]);
@@ -42,16 +42,16 @@ namespace FiiAuth
                         return;
 
                     case 0:
-                        Log.Write(2, "FiiAuth", "Empty result?");
+                        Log.Write(LogLevels.ERROR, "FiiAuth", "Empty result?");
                         break;
 
                     default:
-                        Log.Write(2, "FiiAuth", "Something happened.");
+                        Log.Write(LogLevels.ERROR, "FiiAuth", "Something happened.");
                         break;
                 }
             } while (!loginDone);
 
-            Log.Write(0, "FiiAuth", "Railgun.exe should now be able to authenticate with Flashii Chat.");
+            Log.Write(LogLevels.INFO, "FiiAuth", "Railgun.exe should now be able to authenticate with Flashii Chat.");
         }
 
         static string[] StartAuth()
@@ -70,7 +70,7 @@ namespace FiiAuth
         static string[] Login(string userName, string password)
         {
             // Set parameters
-            string postLocation = "//flashii.net/spookyshit/login.php";
+            string postLocation = "//flashii.net/web/login.php";
             string postParams = "u=" + userName + "&p=" + password + "&z=meow";
             string result = "";
             bool success = true;
@@ -110,7 +110,7 @@ namespace FiiAuth
             // If success is still false display an error and return false
             if (!success)
             {
-                Log.Write(2, "FiiAuth", "Check your internet connection, both https and http failed to connect.");
+                Log.Write(LogLevels.ERROR, "FiiAuth", "Check your internet connection, both https and http failed to connect.");
             }
 
             // Check if we got anything back

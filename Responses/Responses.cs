@@ -22,10 +22,10 @@ namespace Responses
                     string json = read.ReadToEnd();
                     Triggers = JsonConvert.DeserializeObject<List<Trigger>>(json);
                 }
-                Log.Write(0, "Responses", "Loaded responses.");
+                Log.Write(LogLevels.INFO, "Responses", "Loaded responses.");
             } else
             {
-                Log.Write(1, "Responses", "Responses.json does not exist!");
+                Log.Write(LogLevels.WARNING, "Responses", "Responses.json does not exist!");
             }
         }
 
@@ -50,7 +50,7 @@ namespace Responses
             // Reload
             if(message == "!responses:reload")
             {
-                Log.Write(0, "Responses", "Reload requested in chat.");
+                Log.Write(LogLevels.INFO, "Responses", "Reload requested in chat.");
                 Load();
                 Chat.SendMessage("[i]Responses: Reloaded responses file.[/i]");
             }
@@ -99,15 +99,6 @@ namespace Responses
 
             if(trigger != null)
             {
-                // Check flood limit
-                if (Chat.CheckFlood(int.Parse(data[2])))
-                {
-                    return;
-                }
-
-                // Update flood limit
-                Chat.UpdateFlood(int.Parse(data[2]));
-
                 foreach (string responseRaw in trigger.Responses[(new Random()).Next(trigger.Responses.Count)])
                 {
                     // Get user details

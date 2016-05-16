@@ -18,13 +18,13 @@ namespace LastFM
 
         public void Initialise()
         {
-            Log.Write(0, "LastFM", "Loading Last.FM settings.");
+            Log.Write(LogLevels.INFO, "LastFM", "Loading Last.FM settings.");
             string osuApiKey = Config.Read("LastFM", "apiKey");
 
             if (osuApiKey.Length < 1)
             {
                 Config.Write("LastFM", "apiKey", "api_key_here");
-                Log.Write(1, "LastFM", "No API key was set in the settings file, a placeholder value has been created!");
+                Log.Write(LogLevels.ERROR, "LastFM", "No API key was set in the settings file, a placeholder value has been created!");
             }
             else
             {
@@ -46,22 +46,13 @@ namespace LastFM
                 // !np
                 if (message.StartsWith("!np"))
                 {
-                    // Check flood limit
-                    if (Chat.CheckFlood(int.Parse(data[2])))
-                    {
-                        return;
-                    }
-
-                    // Update flood limit
-                    Chat.UpdateFlood(int.Parse(data[2]));
-
                     string[] cArgs = message.Substring(1).Split(' ');
 
                     // Create a WebClient object
                     WebClient webClient = new WebClient();
 
                     // Set headers
-                    webClient.Headers["User-Agent"] = "Shinoa Last.FM Extension";
+                    webClient.Headers["User-Agent"] = "Railgun Last.FM Extension";
 
                     string[] usernames = { null, null };
                     string username = "";
@@ -79,11 +70,11 @@ namespace LastFM
                     // Try to get the last.fm username
                     try
                     {
-                        usernames = webClient.DownloadString("http://flashii.net/spookyshit/lastfm.php?u=" + username + "&z=meow").Split('|');
+                        usernames = webClient.DownloadString("http://flashii.net/web/lastfm.php?u=" + username + "&z=meow").Split('|');
                     }
                     catch
                     {
-                        Log.Write(2, "LastFM", "Failed to connect to Flashii!");
+                        Log.Write(LogLevels.ERROR, "LastFM", "Failed to connect to Flashii!");
                         return;
                     }
 
@@ -101,7 +92,7 @@ namespace LastFM
                         apiReturn = LastFM.LatestTrack(usernames[1]);
                     }
                     catch {
-                        Log.Write(1, "LastFM", "Something went wrong while getting the API return.");
+                        Log.Write(LogLevels.WARNING, "LastFM", "Something went wrong while getting the API return.");
                         return;
                     }
 
@@ -111,13 +102,13 @@ namespace LastFM
                         return;
                     }
 
-                    string send = "[i][b]" + usernames[0] + "[/b] ";
-                    string track = apiReturn.GetElementsByTagName("name")[1].InnerText;
-                    string trackUrl = apiReturn.GetElementsByTagName("url")[1].InnerText;
-                    string artist = apiReturn.GetElementsByTagName("name")[0].InnerText;
-                    string aristUrl = apiReturn.GetElementsByTagName("url")[0].InnerText;
-
+                    string send = "[i][b]" + usernames[0] + "[/b] ",
+                           track = apiReturn.GetElementsByTagName("name")[1].InnerText,
+                           trackUrl = apiReturn.GetElementsByTagName("url")[1].InnerText,
+                           artist = apiReturn.GetElementsByTagName("name")[0].InnerText,
+                           aristUrl = apiReturn.GetElementsByTagName("url")[0].InnerText;
                     bool nowListening = apiReturn.GetElementsByTagName("track")[0].Attributes["nowplaying"] != null;
+
                     send += (nowListening ? "is listening" : "last listened") + " to ";
                     send += "[url=" + trackUrl + "]" + track + "[/url]";
                     send += (artist.Length > 1 && track.Length > 1 ? " by " : "");

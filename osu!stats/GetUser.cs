@@ -1,4 +1,4 @@
-﻿namespace osuStats
+﻿namespace osu
 {
     public class GetUser
     {

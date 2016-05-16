@@ -1,12 +1,11 @@
 ﻿using System;
 using Core;
 using Extensions;
-using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Net;
 using System.Globalization;
 
-namespace osuStats
+namespace osu
 {
     public class Extension : IExtension
     {
@@ -30,15 +29,6 @@ namespace osuStats
                 string message = Regex.Replace(data[3], @"\[[^]]+\]", "");
                 if (message.StartsWith("!osu:"))
                 {
-                    // Check flood limit
-                    if (Chat.CheckFlood(int.Parse(data[2])))
-                    {
-                        return;
-                    }
-
-                    // Update flood limit
-                    Chat.UpdateFlood(int.Parse(data[2]));
-
                     string[] cArgs = message.Substring(5).Split(' ');
 
                     switch (cArgs[0])
@@ -48,7 +38,7 @@ namespace osuStats
                             WebClient webClient = new WebClient();
 
                             // Set headers
-                            webClient.Headers["User-Agent"] = "Shinoa osu!stats Extension";
+                            webClient.Headers["User-Agent"] = "Railgun osu!stats Extension";
 
                             string[] usernames = { null, null };
                             string username = "";
@@ -65,11 +55,11 @@ namespace osuStats
                             // Try to get the osu username
                             try
                             {
-                                usernames = webClient.DownloadString("http://flashii.net/spookyshit/osu.php?u=" + username + "&z=meow").Split('|');
+                                usernames = webClient.DownloadString("http://flashii.net/web/osu.php?u=" + username + "&z=meow").Split('|');
                             }
                             catch
                             {
-                                Log.Write(2, "osu!stats", "Failed to connect to Flashii!");
+                                Log.Write(LogLevels.ERROR, "osu!stats", "Failed to connect to Flashii!");
                                 return;
                             }
 
@@ -129,7 +119,7 @@ namespace osuStats
                                 + int.Parse((osu.count_rank_a ?? "-1")).ToString("N0", cultureInfo)
                                 + "\r\n"
                                 + "Level: "
-                                + Math.Round(float.Parse((osu.level ?? "-1"), CultureInfo.InvariantCulture))
+                                + Math.Floor(float.Parse((osu.level ?? "-1"), CultureInfo.InvariantCulture))
                                 + " :: Plays: "
                                 + int.Parse((osu.playcount ?? "-1")).ToString("N0", cultureInfo)
                                 + " :: 300s: "
@@ -147,13 +137,13 @@ namespace osuStats
 
         public void Initialise()
         {
-            Log.Write(0, "osu!stats", "Loading osu!stats settings.");
+            Log.Write(LogLevels.INFO, "osu!stats", "Loading osu!stats settings.");
             string osuApiKey = Config.Read("OsuStats", "apiKey");
 
             if(osuApiKey.Length < 1)
             {
                 Config.Write("OsuStats", "apiKey", "api_key_here");
-                Log.Write(1, "osu!stats", "No API key was set in the settings file, a placeholder value has been created!");
+                Log.Write(LogLevels.WARNING, "osu!stats", "No API key was set in the settings file, a placeholder value has been created!");
             } else {
                 osuStats.SetApiKey(osuApiKey);
             }

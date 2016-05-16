@@ -13,7 +13,7 @@ namespace Core
         {
             string[] files = null;
 
-            if(Directory.Exists(path))
+            if (Directory.Exists(path))
             {
                 files = Directory.GetFiles(path, "*.dll");
 

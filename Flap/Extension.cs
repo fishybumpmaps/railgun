@@ -17,7 +17,7 @@ namespace Flap
 
         public void Initialise()
         {
-            Log.Write(0, "Flap", "Flapstension loaded.");
+            Log.Write(LogLevels.INFO, "Flap", "Flapstension loaded.");
         }
 
         public void Destruct()
@@ -34,15 +34,6 @@ namespace Flap
 
             if (data[0] == "2" && message.StartsWith("!flap"))
             {
-                // Check flood limit
-                if (Chat.CheckFlood(int.Parse(data[2])))
-                {
-                    return;
-                }
-
-                // Update flood limit
-                Chat.UpdateFlood(int.Parse(data[2]));
-
                 // Create vars
                 string sendMessage = "";
                 Random random = new Random();
