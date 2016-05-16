@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Linq;
 
@@ -20,7 +19,7 @@ namespace Core
             if (!File.Exists(path))
             {
                 Log.Write(LogLevels.INFO, "Config", "Configuration file doesn't exists, creating a new file.");
-                FileStream config = File.Create("Config.ini");
+                FileStream config = File.Create(path);
                 config.Close();
             }
         }

@@ -11,7 +11,7 @@ namespace Core
         public static Sock sock; // Sock interface container
         public static string[] directories = { "Logs", "Extensions", "Data" }; // Logs directory name
         private static ManualResetEvent shutdown = new ManualResetEvent(false); // Thing to keep the console window running
-        public static ICollection<IExtension> Extensions; // Extension container
+        public static ICollection<IExtensionV1> Extensions; // Extension container
         private static DateTime startTime = DateTime.Now; // For getting the application uptime
 
         // Getting the uptime
@@ -23,9 +23,8 @@ namespace Core
         // Extensions (re)loader
         public static void LoadExtensions()
         {
-            Log.Write(LogLevels.INFO, "Core", "Loading extensions...");
-            Extensions = ExtensionLoader.LoadExtensions(directories[1]);
-            Log.Write(LogLevels.INFO, "Core", "Loaded extensions!");
+            Log.Write(LogLevels.INFO, "Core", "Loading legacy extensions...");
+            Extensions = ExtensionLoader.LoadExtensions(directories[1] + "/v1");
         }
 
         // Main function
@@ -62,7 +61,6 @@ namespace Core
             // Make sure the config exists
             Config.Init();
             Config.Write("Meta", "last_started", DateTime.Now.ToString());
-            Log.Write(LogLevels.INFO, "Core", "Initialised configuration!");
 
             // Set flood limit
             Log.Write(LogLevels.INFO, "Core", "Setting message limit...");
@@ -80,9 +78,12 @@ namespace Core
             Users.Init();
             Log.Write(LogLevels.INFO, "Core", "Adding ChatBot user...");
             Users.Add(-1, "ChatBot", "#9E8DA7", "0 0 0 0 0");
-            Log.Write(LogLevels.INFO, "Core", "Users handler initialised.");
 
-            // Loading extensions
+            // Load extensions
+            Log.Write(LogLevels.INFO, "Core", "Loading extensions...");
+            ExtensionManager.Load(directories[1]);
+
+            // Loading legacy extensions
             LoadExtensions();
 
             // Check if required configuration variables exist
@@ -138,7 +139,7 @@ namespace Core
 
             Log.Write(LogLevels.INFO, "Core", "Destructing loaded extensions.");
 
-            foreach (IExtension extension in Extensions)
+            foreach (IExtensionV1 extension in Extensions)
             {
                 extension.Destruct();
             }

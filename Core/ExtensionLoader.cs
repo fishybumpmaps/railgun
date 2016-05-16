@@ -9,7 +9,7 @@ namespace Core
 {
     public static class ExtensionLoader
     {
-        public static ICollection<IExtension> LoadExtensions(string path)
+        public static ICollection<IExtensionV1> LoadExtensions(string path)
         {
             string[] files = null;
 
@@ -26,7 +26,7 @@ namespace Core
                     assemblies.Add(assembly);
                 }
 
-                Type extType = typeof(IExtension);
+                Type extType = typeof(IExtensionV1);
 
                 ICollection<Type> extTypes = new List<Type>();
 
@@ -51,11 +51,11 @@ namespace Core
                     }
                 }
 
-                ICollection<IExtension> extensions = new List<IExtension>(extTypes.Count());
+                ICollection<IExtensionV1> extensions = new List<IExtensionV1>(extTypes.Count());
 
                 foreach(Type type in extTypes)
                 {
-                    IExtension extension = (IExtension)Activator.CreateInstance(type);
+                    IExtensionV1 extension = (IExtensionV1)Activator.CreateInstance(type);
                     extension.Initialise();
                     extensions.Add(extension);
                 }

@@ -111,7 +111,7 @@ namespace Core
 
                             case "extensions:loaded":
                                 string extensions = "Loaded extensions:";
-                                foreach (IExtension extension in Core.Extensions)
+                                foreach (IExtensionV1 extension in Core.Extensions)
                                 {
                                     extensions += "\r\n" + extension.Name;
                                 }
@@ -259,7 +259,7 @@ namespace Core
                     break;
             }
 
-            foreach(IExtension extension in Core.Extensions)
+            foreach(IExtensionV1 extension in Core.Extensions)
             {
                 new Thread(delegate () {
                     extension.Handle(data);

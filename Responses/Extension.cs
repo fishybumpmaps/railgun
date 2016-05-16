@@ -3,7 +3,7 @@ using Extensions;
 
 namespace Responses
 {
-    public class Extension : IExtension
+    public class Extension : IExtensionV1
     {
         public string Name
         {

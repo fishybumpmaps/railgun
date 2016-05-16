@@ -7,7 +7,7 @@ using System.Globalization;
 
 namespace osu
 {
-    public class Extension : IExtension
+    public class Extension : IExtensionV1
     {
         public string Name
         {

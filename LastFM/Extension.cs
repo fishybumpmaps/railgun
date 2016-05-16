@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 
 namespace LastFM
 {
-    public class Extension : IExtension
+    public class Extension : IExtensionV1
     {
         public string Name
         {

@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 
 namespace Logger
 {
-    public class Extension : IExtension
+    public class Extension : IExtensionV1
     {
         public static bool active = false;
         private static StreamWriter logWriter;
