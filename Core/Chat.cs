@@ -105,15 +105,15 @@ namespace Core
                             case "extensions:reload":
                                 Log.Write(LogLevels.INFO, "Core", "Extension reload was issued by " + user.userName);
                                 SendMessage("Reloading all extensions...");
-                                Core.LoadExtensions();
+                                ExtensionManager.Reload();
                                 SendMessage("Finished!");
                                 break;
 
                             case "extensions:loaded":
                                 string extensions = "Loaded extensions:";
-                                foreach (IExtensionV1 extension in Core.Extensions)
+                                foreach (KeyValuePair<string, IExtension> extension in ExtensionManager.Loaded)
                                 {
-                                    extensions += "\r\n" + extension.Name;
+                                    extensions += "\r\n" + extension.Key;
                                 }
                                 SendMessage(extensions);
                                 break;
@@ -259,12 +259,15 @@ namespace Core
                     break;
             }
 
-            foreach(IExtensionV1 extension in Core.Extensions)
+            /*
+             * place trigger for OnAfterReceiveMessage here
+             * 
+             * foreach(IExtensionV1 extension in Core.Extensions)
             {
                 new Thread(delegate () {
                     extension.Handle(data);
                 }).Start();
-            }
+            }*/
         }
     }
 }

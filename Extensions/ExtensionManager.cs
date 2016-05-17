@@ -10,7 +10,10 @@ namespace Extensions
     public static class ExtensionManager
     {
         // Contains the list of loaded extensions with the name provided by the Name() function as the key
-        private static Dictionary<string, IExtension> Loaded = null;
+        public static Dictionary<string, IExtension> Loaded { get; private set; } = null;
+
+        // Contains the source directory for the reload function
+        public static string ExtensionsDir { get; private set; } = null;
 
         // Gets the list of files to load.
         private static Assembly[] GetAssemblies(string dir)
@@ -101,6 +104,9 @@ namespace Extensions
                 return;
             }
 
+            // Set dir
+            ExtensionsDir = dir;
+
             // Get all assemblies
             Assembly[] assemblies = GetAssemblies(dir);
 
@@ -120,6 +126,35 @@ namespace Extensions
 
             // Commit the extensions list to the loaded array
             Loaded = extensions;
+        }
+
+        // Unload all loaded extensions
+        public static void Unload()
+        {
+            if (Loaded == null)
+            {
+                return;
+            }
+
+            foreach (KeyValuePair<string, IExtension> ext in Loaded)
+            {
+                ext.Value.Kill();
+                Loaded.Remove(ext.Key);
+            }
+
+            Loaded = null;
+        }
+
+        // Reload all extensions
+        public static void Reload()
+        {
+            if (ExtensionsDir == null)
+            {
+                return;
+            }
+
+            Unload();
+            Load(ExtensionsDir);
         }
     }
 }

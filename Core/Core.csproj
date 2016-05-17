@@ -70,7 +70,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Chat.cs" />
-    <Compile Include="ExtensionLoader.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="Log.cs" />
     <Compile Include="LogLevels.cs" />
@@ -106,6 +105,10 @@
     <ProjectReference Include="..\Extensions\Extensions.csproj">
       <Project>{953ce343-3355-494e-a657-f648fa6a1b06}</Project>
       <Name>Extensions</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Protocol\Protocol.csproj">
+      <Project>{155a0b95-648d-4517-a607-8e904fc6e46d}</Project>
+      <Name>Protocol</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -3,30 +3,25 @@ using System.IO;
 using System.Threading;
 using System.Collections.Generic;
 using Extensions;
+using Protocol;
 
 namespace Core
 {
     public static class Core
     {
         public static Sock sock; // Sock interface container
-        public static string[] directories = { "Logs", "Extensions", "Data" }; // Logs directory name
+        public static string[] directories = { "Logs", "Extensions", "Data", "Protocols" }; // Logs directory name
         private static ManualResetEvent shutdown = new ManualResetEvent(false); // Thing to keep the console window running
-        public static ICollection<IExtensionV1> Extensions; // Extension container
         private static DateTime startTime = DateTime.Now; // For getting the application uptime
+
+        private static IProtocol Protocol = null;
 
         // Getting the uptime
         public static double GetUptime()
         {
             return (DateTime.Now - startTime).TotalSeconds;
         }
-
-        // Extensions (re)loader
-        public static void LoadExtensions()
-        {
-            Log.Write(LogLevels.INFO, "Core", "Loading legacy extensions...");
-            Extensions = ExtensionLoader.LoadExtensions(directories[1] + "/v1");
-        }
-
+        
         // Main function
         static void Main(string[] args)
         {
@@ -62,6 +57,36 @@ namespace Core
             Config.Init();
             Config.Write("Meta", "last_started", DateTime.Now.ToString());
 
+            // Attempt to get the protocol
+            string protocol;
+
+            try {
+                protocol = Config.Read("Meta", "protocol");
+            } catch {
+                protocol = "";
+            }
+
+            if (protocol.Length < 1)
+            {
+                Log.Write(LogLevels.ERROR, "Core", "No protocol was set in the config, please set one!");
+                Config.Write("Meta", "protocol", "");
+                Shutdown();
+            }
+
+            // Building list of protocols
+            Log.Write(LogLevels.INFO, "Core", "Building list of protocols...");
+            ProtocolManager.BuildList(directories[3]);
+            
+            try {
+                ProtocolManager.Loaded.TryGetValue(protocol, out Protocol);
+            } catch {
+                Log.Write(LogLevels.ERROR, "Core", "The specified protocol doesn't exist, please make sure you're using a protocol that exists in the Protocols folder.");
+                Shutdown();
+            }
+
+            Log.Write(LogLevels.INFO, "Core", "Loading protocol wrapper...");
+            Protocol.Open();
+
             // Set flood limit
             Log.Write(LogLevels.INFO, "Core", "Setting message limit...");
             try {
@@ -69,8 +94,8 @@ namespace Core
             } catch
             {
                 Log.Write(LogLevels.WARNING, "Core", "No message limit was set, the default value of 10 seconds has been written to the config!");
-                Chat.messageLimit = 10;
-                Config.Write("Meta", "flood_limit", "10");
+                Chat.messageLimit = 2;
+                Config.Write("Meta", "flood_limit", "2");
             }
 
             // Initialise user handler
@@ -83,15 +108,13 @@ namespace Core
             Log.Write(LogLevels.INFO, "Core", "Loading extensions...");
             ExtensionManager.Load(directories[1]);
 
-            // Loading legacy extensions
-            LoadExtensions();
-
             // Check if required configuration variables exist
             if (Config.Read("Meta", "server").Length < 1)
             {
                 Config.Write("Meta", "server", "localhost");
                 Log.Write(LogLevels.WARNING, "Core", "A server variable was not set in the config!");
                 Log.Write(LogLevels.INFO, "Core", "A placeholder was created, please make sure to update this to the correct server address!");
+                Shutdown();
             }
             
             // Attempt to connect to chat server
@@ -136,14 +159,7 @@ namespace Core
                 }
             }
             catch { }
-
-            Log.Write(LogLevels.INFO, "Core", "Destructing loaded extensions.");
-
-            foreach (IExtensionV1 extension in Extensions)
-            {
-                extension.Destruct();
-            }
-
+            
             Log.Write(LogLevels.INFO, "Core", "Good bye!");
 
             shutdown.Set();

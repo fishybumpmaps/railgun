@@ -2,16 +2,19 @@
 {
     public interface IProtocol
     {
+        // Returns a unique name to identify this protocol by (namely in the config)
+        string Name();
+
         // Returns the connection state
         int State();
 
-        // Sends the authentication command to the server
-        void Authenticate(string[] args);
-
-        // Sends a message to the server
-        void SendMessage(string text);
+        // Open the connection with the server
+        void Open();
 
         // Closes the connection
         void Close();
+
+        // Sends a message to the server
+        void SendMessage(string text);
     }
 }
