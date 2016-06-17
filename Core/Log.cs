@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace Core
+namespace Railgun
 {
     public static class Log
     {

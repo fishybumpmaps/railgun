@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("SockLegacy")]
+[assembly: AssemblyTitle("Protocols")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("SockLegacy")]
+[assembly: AssemblyProduct("Protocols")]
 [assembly: AssemblyCopyright("Copyright ©  2016")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("a0396e4f-7cfe-46f8-8d80-bf015077b657")]
+[assembly: Guid("2e0baba1-b596-49f4-84de-160a568e5c51")]
 
 // Version information for an assembly consists of the following four values:
 //

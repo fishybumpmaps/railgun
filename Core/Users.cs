@@ -1,53 +1,73 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace Core
+namespace Railgun
 {
     public static class Users
     {
-        public static List<User> Online;
+        private static Dictionary<int, User> UserStorage = new Dictionary<int, User>();
 
-        public static User Add(int id, string userName, string colour, string permissions)
+        public static User Add(User user)
         {
-            try {
-                return Get(id);
-            } catch{}
-            User subject = new User(id, userName, colour, permissions);
-            Online.Add(subject);
-            return subject;
+            User existing = Get(user.id);
+
+            if (existing != null)
+            {
+                return existing;
+            }
+
+            UserStorage.Add(user.id, user);
+
+            return user;
         }
 
-        public static User Remove(int id)
+        public static User Remove(User user)
         {
-            User subject = Get(id);
-            Online.Remove(subject);
-            return subject;
+            UserStorage.Remove(user.id);
+
+            return user;
         }
 
         public static User Get(int id)
         {
-            User user = Online.Single(get => get.id == id);
+            User user = null;
+
+            if (UserStorage.ContainsKey(id))
+            {
+                user = UserStorage[id];
+            }
+
             return user;
         }
 
         public static User Get(string name)
         {
-            User user = Online.Single(get => get.userName == name);
+            User user = null;
+
+            try
+            {
+                user = UserStorage.Single(get => get.Value.Username == name).Value;
+            }
+            catch { }
+
             return user;
         }
 
-        public static User Update(int id, string userName, string colour, string permissions)
+        public static User Update(int id, User user)
         {
-            User user = Get(id);
-            user.userName = userName;
-            user.colour = colour;
-            user.permissions = permissions;
+            if (!UserStorage.ContainsKey(id))
+            {
+                return null;
+            }
+
+            UserStorage[id] = user;
+
             return user;
         }
 
-        public static void Init()
+        public static void Clear()
         {
-            Online = new List<User>();
+            UserStorage.Clear();
         }
     }
 }

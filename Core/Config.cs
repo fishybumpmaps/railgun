@@ -1,131 +1,36 @@
 ﻿using System.Collections.Generic;
-using System.IO;
-using System.Text.RegularExpressions;
-using System.Linq;
 
-namespace Core
+namespace Railgun
 {
     public static class Config
     {
-        // Path to INI file
-        public static readonly string path = Directory.GetCurrentDirectory() + "/Config.ini";
+        public static fwConfig.Config config;
         
-        // Initialise
         public static void Init()
         {
             Log.Write(LogLevels.INFO, "Config", "Initialising configuration.");
 
-            // Check if the file exists
-            if (!File.Exists(path))
-            {
-                Log.Write(LogLevels.INFO, "Config", "Configuration file doesn't exists, creating a new file.");
-                FileStream config = File.Create(path);
-                config.Close();
-            }
+            config = new fwConfig.Config("Config.ini");
         }
 
-        // Open the config file
         private static string RawRead()
         {
-            return File.ReadAllText(path);
+            return config.ToString();
         }
 
-        // Write data to the ini file
         public static void Write(string section, string key, string value)
         {
-            // Perform a raw read
-            string Raw = RawRead();
-
-            // Escape the section name
-            section = Regex.Escape(section);
-
-            // Fetch the region using a regex
-            string SectionRaw = Regex.Match(Raw, string.Format(@"^(?<=\[{0}\]\r\n)(?:(?!^\[).)*(?=\r\n)", section), RegexOptions.Multiline | RegexOptions.Singleline).ToString();
-
-            // Check if the section exists
-            if (SectionRaw.Length < 1)
-            {
-                Raw += string.Format("[{0}]\r\n", section);
-                Raw += string.Format("{0}={1}\r\n", key, value);
-            }
-            else {
-                // Check if the value exists
-                string EntryRaw = Regex.Match(SectionRaw, string.Format(@"^{0}[^;\r\n]*", key), RegexOptions.Multiline).ToString();
-
-                // Check if the entry exists
-                if (EntryRaw.Length < 1)
-                {
-                    SectionRaw += string.Format("\r\n{0}={1}", key, value);
-                }
-                else
-                {
-                    SectionRaw = Regex.Replace(SectionRaw, string.Format(@"^{0}[^;\r\n]*", key), string.Format("{0}={1}", key, value), RegexOptions.Multiline);
-                }
-
-                // Replace the section with the newer section
-                Raw = Regex.Replace(Raw, string.Format(@"^(?<=\[{0}\]\r\n)(?:(?!^\[).)*(?=\r\n)", section), SectionRaw, RegexOptions.Multiline | RegexOptions.Singleline);
-            }
-
-            // Save the file
-            File.WriteAllText(path, Raw);
+            config.Set(section, key, value);
         }
 
-        // Read data from the ini file
         public static string Read(string section, string key)
         {
-            // Get the section we need
-            List<KeyValuePair<string, string>> CSection = Section(section);
-
-            // Create the entry variable
-            KeyValuePair<string, string> entry;
-
-            // Use Linq to get the entry
-            try {
-                entry = CSection.Single(get => get.Key == key);
-            } catch
-            {
-                return "";
-            }
-
-            // Return the value
-            return entry.Value;
+            return config.Get(section, key);
         }
 
-        // Get a section
-        public static List<KeyValuePair<string, string>> Section(string section)
+        public static Dictionary<string, string> Section(string section)
         {
-            // Perform a raw read
-            string Raw = RawRead();
-
-            // Escape the section name
-            section = Regex.Escape(section);
-            
-            // Fetch the region using a regex
-            Match SectionRaw = Regex.Match(Raw, string.Format(@"^(?<=\[{0}\]\r\n)(?:(?!^\[).)*(?=\r\n)", section), RegexOptions.Multiline | RegexOptions.Singleline);
-
-            // Split the entries up
-            MatchCollection SectionEntries = Regex.Matches(SectionRaw.ToString(), @"^[^;\s][^;\r\n]*", RegexOptions.Multiline);
-
-            // Create result list
-            List<KeyValuePair<string, string>> result = new List<KeyValuePair<string, string>>();
-            
-            // Iterate over the matches
-            foreach (Match entryRaw in SectionEntries)
-            {
-                // Convert the entry to string and split at the =
-                string[] entry = entryRaw.ToString().Split('=');
-
-                // Add KeyValuepairs for each entry
-                result.Add(
-                    new KeyValuePair<string, string>(
-                        entry[0],
-                        entry[1]
-                    )
-                );
-            }
-
-            // Return the result
-            return result;
+            return config.Section(section);
         }
     }
 }

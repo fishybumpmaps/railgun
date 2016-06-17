@@ -1,5 +1,5 @@
 ﻿using Newtonsoft.Json;
-using Core;
+using Railgun;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -105,8 +105,8 @@ namespace Responses
                     User user = Users.Get(int.Parse(data[2]));
 
                     string response = responseRaw
-                        .Replace("@UNAME", user.userName)
-                        .Replace("@UCOLOUR", user.colour)
+                        .Replace("@UNAME", user.Username)
+                        .Replace("@UCOLOUR", user.Colour)
                         .Replace("@UID", user.id.ToString());
 
                     // Do a 1 second sleep for a "realistic" effect

@@ -2,32 +2,28 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Protocol;
-using Core;
+using System.Threading.Tasks;
+using WebSocketSharp;
 
-namespace SockLegacy
+namespace Protocols.SockLegacy
 {
     public class Protocol : IProtocol
     {
-        public void Close()
-        {
-        }
-
-        public string Name()
-        {
-            return "SockLegacy";
-        }
-
-        public void Open()
+        public Protocol()
         {
             // Grab the auth section from the config
-            List<KeyValuePair<string, string>> authSection = Config.Section("Auth");
+            Dictionary<string, string> authSection = new Dictionary<string, string>();//Config.Section("Auth");
 
             // Iterate over the entries the the Auth section of the config
             foreach (KeyValuePair<string, string> part in authSection)
             {
-                Log.Write(LogLevels.INFO, "SockLegacy", part.Key);
+                Console.WriteLine(part.Key);
             }
+        }
+
+        ~Protocol()
+        {
+            Console.WriteLine("destructing");
         }
 
         public void SendMessage(string text)

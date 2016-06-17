@@ -1,4 +1,4 @@
-﻿using Core;
+﻿using Railgun;
 using Extensions;
 using System;
 using System.IO;
@@ -26,12 +26,12 @@ namespace Logger
             // Create log filename
             string filename = "chat_" + DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss") + ".log";
             // Check if the destination directory exists
-            if (!Directory.Exists(Core.Core.directories[2] + "/ChatLogs/"))
+            if (!Directory.Exists(Railgun.Constants.Directories.DATA + "/ChatLogs/"))
             {
-                Directory.CreateDirectory(Core.Core.directories[2] + "/ChatLogs/");
+                Directory.CreateDirectory(Railgun.Constants.Directories.DATA + "/ChatLogs/");
             }
             // Create stream writer
-            logWriter = new StreamWriter(Core.Core.directories[2] + "/ChatLogs/" + filename);
+            logWriter = new StreamWriter(Railgun.Constants.Directories.DATA + "/ChatLogs/" + filename);
             // Enable auto flush
             logWriter.AutoFlush = true;
 
@@ -66,10 +66,10 @@ namespace Logger
                     logLine += "* " + data[3] + " has joined.";
                     break;
                 case 2:
-                    logLine += "<" + Chat.lastUser.userName + "[ID:" + Chat.lastUser.id + "]> " + Regex.Replace(data[3], @"\[[^]]+\]", "").Replace(" <br/> ", "\n");
+                    logLine += "<" + Chat.lastUser.Username + "[ID:" + Chat.lastUser.id + "]> " + Regex.Replace(data[3], @"\[[^]]+\]", "").Replace(" <br/> ", "\n");
                     break;
                 case 3:
-                    logLine += "* " + Chat.lastUser.userName;
+                    logLine += "* " + Chat.lastUser.Username;
                     // Add console log
                     switch (data[3])
                     {
@@ -85,7 +85,7 @@ namespace Logger
                     }
                     break;
                 case 5:
-                    logLine += "* " + Chat.lastUser.userName + " " + (data[1] == "0" ? "joined" : "left") + " the channel.";
+                    logLine += "* " + Chat.lastUser.Username + " " + (data[1] == "0" ? "joined" : "left") + " the channel.";
                     break;
                 case 7:
                     if(int.Parse(data[1]) == 0)

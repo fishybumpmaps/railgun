@@ -4,15 +4,16 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{B9B5BD9A-86CA-4ACB-BBB3-56FCEEE8A2F1}</ProjectGuid>
-    <OutputType>Library</OutputType>
+    <ProjectGuid>{3FA8859A-924A-4360-A543-7C4129594A6E}</ProjectGuid>
+    <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Flap</RootNamespace>
-    <AssemblyName>Flap</AssemblyName>
+    <RootNamespace>RailgunConsole</RootNamespace>
+    <AssemblyName>RailgunConsole</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -22,6 +23,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -39,15 +41,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Extension.cs" />
-    <Compile Include="_Extension.cs" />
+    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Extensions\Extensions.csproj">
-      <Project>{953ce343-3355-494e-a657-f648fa6a1b06}</Project>
-      <Name>Extensions</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Core\Railgun.csproj">
       <Project>{d149e788-5705-4806-8571-b4d0302136b7}</Project>
       <Name>Railgun</Name>
