@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("Railgun Flapstension")]
-[assembly: AssemblyCopyright("Copyright © Flashwave 2016")]
+[assembly: AssemblyCopyright("flash.moe 2016")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
